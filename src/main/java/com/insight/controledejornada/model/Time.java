@@ -1,17 +1,22 @@
-package com.insight.controledejornada.controledejornada.model;
+package com.insight.controledejornada.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalTime;
 
-@AllArgsConstructor
 @Getter
 @Setter
-public class Time {
+@AllArgsConstructor
+@ToString
+public abstract class Time {
+
+    private Long id;
 
     private LocalTime input;
 
     private LocalTime output;
+
 }

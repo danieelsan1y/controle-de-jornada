@@ -1,4 +1,4 @@
-package com.insight.controledejornada.controledejornada.model;
+package com.insight.controledejornada.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,8 +7,9 @@ import java.time.LocalTime;
 
 @Getter
 @Setter
-public class DelayTime extends Time{
+public class DelayTime extends Time {
     public DelayTime(LocalTime input, LocalTime output) {
-        super(input, output);
+        super(null, input, output);
     }
+
 }
