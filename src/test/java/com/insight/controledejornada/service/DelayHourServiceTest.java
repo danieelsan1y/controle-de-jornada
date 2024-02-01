@@ -60,9 +60,6 @@ class DelayHourServiceTest {
         final List<DelayHour> delayHours = this.delayHourService.getDelayHours();
 
         Assertions.assertEquals(0, delayHours.size());
-
-        Assertions.assertEquals(LocalTime.of(11, 0), delayHours.get(0).getStart());
-        Assertions.assertEquals(LocalTime.of(12, 0), delayHours.get(0).getEnd());
     }
 
     @Test
