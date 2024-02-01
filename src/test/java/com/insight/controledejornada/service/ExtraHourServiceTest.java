@@ -50,7 +50,7 @@ class ExtraHourServiceTest {
     }
 
     @Test
-    public void ExampleOfTestThreeWithOvertimeFromSixOClockToEightOClockFromTwelveToThirteenThirtyAndFromSeventeenThirtyToTwenty() {
+    public void exampleOfTestThreeWithOvertimeFromSixOClockToEightOClockFromTwelveToThirteenThirtyAndFromSeventeenThirtyToTwenty() {
         Mockito.when(this.workTimeRepository.listAll())
                 .thenReturn(getWorkScheduleExampleThree());
 
@@ -72,7 +72,7 @@ class ExtraHourServiceTest {
     }
 
     @Test
-    public void test() {
+    public void example3OfOvertimeReturningSevenHoursToEightHoursAndTwelveHoursToTwelveThirtyMinutes() {
         Mockito.when(this.workTimeRepository.listAll())
                 .thenReturn(getWorkScheduleExampleThree());
 
@@ -91,7 +91,7 @@ class ExtraHourServiceTest {
     }
 
     @Test
-    public void test2() {
+    public void example4OfOvertimeReturningTwentyOneToTwentyTwo() {
         Mockito.when(this.workTimeRepository.listAll())
                 .thenReturn(getWorkScheduleExampleFour());
 
@@ -107,7 +107,7 @@ class ExtraHourServiceTest {
     }
 
     @Test
-    public void test3() {
+    public void example4OfOvertimeReturningFromFiveOClockToSevenOClock() {
         Mockito.when(this.workTimeRepository.listAll())
                 .thenReturn(getWorkScheduleExampleFour());
 

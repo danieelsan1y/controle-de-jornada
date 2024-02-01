@@ -43,23 +43,14 @@ public class ExtraHourServiceImpl implements ExtraHourService {
             List<Interval> intervals,
             WorkTime last
     ) {
-        markedTimes
-                .stream()
+        markedTimes.stream()
                 .filter(Objects::nonNull)
                 .forEach(it -> {
-                    if (it.getInput().isBefore(first.getInput())) {
-                        if (first.spansToNextDay() && it.getInput().isAfter(first.getOutput())) {
-                            extraHours.add(new ExtraHour(it.getInput(), first.getInput()));
-                        } else if (!first.spansToNextDay()) {
-                            extraHours.add(new ExtraHour(it.getInput(), first.getInput()));
-                        }
-                    }
+                    this.setOvertimeBeforeWork(first, extraHours, it);
 
-                    this.setExtraTimeBy(it, intervals, extraHours);
+                    this.setOvertimeDuringTheBreak(it, intervals, extraHours);
 
-                    if (last != null && it.getOutput().isAfter(last.getOutput())) {
-                        extraHours.add(new ExtraHour(last.getOutput(), it.getOutput()));
-                    }
+                    this.setOvertimeAfterWork(extraHours, last, it);
                 });
     }
 
@@ -73,14 +64,42 @@ public class ExtraHourServiceImpl implements ExtraHourService {
         return intervals;
     }
 
-    private void setExtraTimeBy(MarkedTime it, List<Interval> intervals, List<ExtraHour> extraHours) {
-        final LocalTime markedTimeInput = it.getInput();
-        final LocalTime markedTimeOutput = it.getOutput();
+    private void setOvertimeBeforeWork(
+            WorkTime first,
+            List<ExtraHour> extraHours,
+            MarkedTime markedTime
+    ) {
+        if (markedTime.getInput().isBefore(first.getInput())) {
+            if (first.spansToNextDay() && markedTime.getInput().isAfter(first.getOutput())) {
+                extraHours.add(new ExtraHour(markedTime.getInput(), first.getInput()));
+            } else if (!first.spansToNextDay()) {
+                extraHours.add(new ExtraHour(markedTime.getInput(), first.getInput()));
+            }
+        }
+    }
+
+    private void setOvertimeAfterWork(
+            List<ExtraHour> extraHours,
+            WorkTime last,
+            MarkedTime markedTime
+    ) {
+        if (last != null && markedTime.getOutput().isAfter(last.getOutput())) {
+            extraHours.add(new ExtraHour(last.getOutput(), markedTime.getOutput()));
+        }
+    }
+
+    private void setOvertimeDuringTheBreak(
+            MarkedTime markedTime,
+            List<Interval> intervals,
+            List<ExtraHour> extraHours
+    ) {
+        final LocalTime markedTimeInput = markedTime.getInput();
+        final LocalTime markedTimeOutput = markedTime.getOutput();
         intervals.stream()
                 .filter(Objects::nonNull)
                 .forEach(interval ->
                         this.processInterval(
-                                it,
+                                markedTime,
                                 extraHours,
                                 interval,
                                 markedTimeOutput,
@@ -115,4 +134,5 @@ public class ExtraHourServiceImpl implements ExtraHourService {
             extraHours.add(new ExtraHour(markedTimeInput, intervalOutput));
         }
     }
+
 }
