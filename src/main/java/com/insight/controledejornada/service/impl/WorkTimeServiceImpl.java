@@ -60,7 +60,7 @@ public class WorkTimeServiceImpl implements WorkTimeService {
         }
 
         return this.workTimeRepository.findById(id)
-                .map(it -> new WorkTimeDTO(it.getId(),it.getInput().toString(), it.getOutput().toString()))
+                .map(it -> new WorkTimeDTO(it.getId(), it.getInput().toString(), it.getOutput().toString()))
                 .orElseThrow(() -> new SystemException("o Objeto 'workTime' não foi encontrado"));
     }
 
@@ -83,5 +83,4 @@ public class WorkTimeServiceImpl implements WorkTimeService {
                 .map(WorkTime::new)
                 .orElseThrow(RuntimeException::new);
     }
-
 }

@@ -19,5 +19,4 @@ public class Interval {
     private final LocalTime input;
 
     private final LocalTime output;
-
 }

@@ -20,6 +20,4 @@ public interface WorkTimeRepository {
     List<WorkTime> listAll();
 
     long getNextId();
-
-
 }

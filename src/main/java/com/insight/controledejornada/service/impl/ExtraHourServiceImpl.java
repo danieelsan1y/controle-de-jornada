@@ -7,10 +7,7 @@ import com.insight.controledejornada.service.ExtraHourService;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -23,6 +20,11 @@ public class ExtraHourServiceImpl implements ExtraHourService {
     public List<ExtraHour> getExtraHours() {
         final List<WorkTime> workTimes = this.workTimeRepository.listAll();
         final List<MarkedTime> markedTimes = this.markedTimeRepository.listAll();
+
+        if (workTimes.isEmpty() || markedTimes.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         final List<ExtraHour> extraHours = new ArrayList<>(0);
         final List<Interval> intervals = getIntervals(workTimes);
 
@@ -134,5 +136,4 @@ public class ExtraHourServiceImpl implements ExtraHourService {
             extraHours.add(new ExtraHour(markedTimeInput, intervalOutput));
         }
     }
-
 }

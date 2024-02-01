@@ -12,5 +12,4 @@ public class MarkedTimeDTO {
     private final String input;
 
     private final String output;
-
 }

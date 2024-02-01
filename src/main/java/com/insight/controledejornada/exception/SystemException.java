@@ -12,5 +12,4 @@ public class SystemException extends RuntimeException {
         super(message);
         this.status = HttpServletResponse.SC_BAD_REQUEST;
     }
-
 }

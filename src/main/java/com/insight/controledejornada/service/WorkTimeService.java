@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WorkTimeService {
+
     void insert(WorkTimeDTO dto);
 
     WorkTimeDTO update(WorkTimeDTO dto);
@@ -18,5 +19,4 @@ public interface WorkTimeService {
     WorkTimeDTO findById(Long id);
 
     List<WorkTimeDTO> listAll();
-
 }

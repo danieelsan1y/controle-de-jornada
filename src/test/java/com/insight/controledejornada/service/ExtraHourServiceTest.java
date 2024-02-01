@@ -34,7 +34,7 @@ class ExtraHourServiceTest {
     }
 
     @Test
-    public void exampleOfTestTwoWithOvertimeFromSevenOClockToEightOClock() {
+    public void testExampleTwoWithOvertimeFromSevenToEight() {
         Mockito.when(this.workTimeRepository.listAll())
                 .thenReturn(getWorkScheduleExampleOneAndTwo());
 
@@ -45,12 +45,12 @@ class ExtraHourServiceTest {
 
         Assertions.assertEquals(1, extraHours.size());
 
-        Assertions.assertEquals(extraHours.stream().findFirst().get().getStart(), LocalTime.of(7, 0));
-        Assertions.assertEquals(extraHours.stream().findFirst().get().getEnd(), LocalTime.of(8, 0));
+        Assertions.assertEquals(LocalTime.of(7, 0), extraHours.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(8, 0), extraHours.get(0).getEnd());
     }
 
     @Test
-    public void exampleOfTestThreeWithOvertimeFromSixOClockToEightOClockFromTwelveToThirteenThirtyAndFromSeventeenThirtyToTwenty() {
+    public void testExampleThreeWithOvertimeFromSixToEightAndTwelveToThirteenThirtyAndSeventeenThirtyToTwenty() {
         Mockito.when(this.workTimeRepository.listAll())
                 .thenReturn(getWorkScheduleExampleThree());
 
@@ -61,18 +61,18 @@ class ExtraHourServiceTest {
 
         Assertions.assertEquals(3, extraHours.size());
 
-        Assertions.assertEquals(extraHours.get(0).getStart(), LocalTime.of(6, 0));
-        Assertions.assertEquals(extraHours.get(0).getEnd(), LocalTime.of(8, 0));
+        Assertions.assertEquals(LocalTime.of(6, 0), extraHours.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(8, 0), extraHours.get(0).getEnd());
 
-        Assertions.assertEquals(extraHours.get(1).getStart(), LocalTime.of(12, 0));
-        Assertions.assertEquals(extraHours.get(1).getEnd(), LocalTime.of(13, 30));
+        Assertions.assertEquals(LocalTime.of(12, 0), extraHours.get(1).getStart());
+        Assertions.assertEquals(LocalTime.of(13, 30), extraHours.get(1).getEnd());
 
-        Assertions.assertEquals(extraHours.get(2).getStart(), LocalTime.of(17, 30));
-        Assertions.assertEquals(extraHours.get(2).getEnd(), LocalTime.of(20, 0));
+        Assertions.assertEquals(LocalTime.of(17, 30), extraHours.get(2).getStart());
+        Assertions.assertEquals(LocalTime.of(20, 0), extraHours.get(2).getEnd());
     }
 
     @Test
-    public void example3OfOvertimeReturningSevenHoursToEightHoursAndTwelveHoursToTwelveThirtyMinutes() {
+    public void testExample3OvertimeReturningSevenToEightAndTwelveToTwelveThirty() {
         Mockito.when(this.workTimeRepository.listAll())
                 .thenReturn(getWorkScheduleExampleThree());
 
@@ -83,15 +83,15 @@ class ExtraHourServiceTest {
 
         Assertions.assertEquals(2, extraHours.size());
 
-        Assertions.assertEquals(extraHours.get(0).getStart(), LocalTime.of(7, 0));
-        Assertions.assertEquals(extraHours.get(0).getEnd(), LocalTime.of(8, 0));
+        Assertions.assertEquals(LocalTime.of(7, 0), extraHours.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(8, 0), extraHours.get(0).getEnd());
 
-        Assertions.assertEquals(extraHours.get(1).getStart(), LocalTime.of(12, 0));
-        Assertions.assertEquals(extraHours.get(1).getEnd(), LocalTime.of(12, 30));
+        Assertions.assertEquals(LocalTime.of(12, 0), extraHours.get(1).getStart());
+        Assertions.assertEquals(LocalTime.of(12, 30), extraHours.get(1).getEnd());
     }
 
     @Test
-    public void example4OfOvertimeReturningTwentyOneToTwentyTwo() {
+    public void testExample4OvertimeReturningTwentyOneToTwentyTwo() {
         Mockito.when(this.workTimeRepository.listAll())
                 .thenReturn(getWorkScheduleExampleFour());
 
@@ -102,12 +102,12 @@ class ExtraHourServiceTest {
 
         Assertions.assertEquals(1, extraHours.size());
 
-        Assertions.assertEquals(extraHours.get(0).getStart(), LocalTime.of(21, 0));
-        Assertions.assertEquals(extraHours.get(0).getEnd(), LocalTime.of(22, 0));
+        Assertions.assertEquals(LocalTime.of(21, 0), extraHours.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(22, 0), extraHours.get(0).getEnd());
     }
 
     @Test
-    public void example4OfOvertimeReturningFromFiveOClockToSevenOClock() {
+    public void testExample4OvertimeReturningFromFiveToSeven() {
         Mockito.when(this.workTimeRepository.listAll())
                 .thenReturn(getWorkScheduleExampleFour());
 
@@ -118,8 +118,8 @@ class ExtraHourServiceTest {
 
         Assertions.assertEquals(1, extraHours.size());
 
-        Assertions.assertEquals(extraHours.get(0).getStart(), LocalTime.of(5, 0));
-        Assertions.assertEquals(extraHours.get(0).getEnd(), LocalTime.of(7, 0));
+        Assertions.assertEquals(LocalTime.of(5, 0), extraHours.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(7, 0), extraHours.get(0).getEnd());
     }
 
     private List<WorkTime> getWorkScheduleExampleOneAndTwo() {
@@ -144,7 +144,7 @@ class ExtraHourServiceTest {
     private List<MarkedTime> getSeccondRecordsExampleThree() {
         return List.of(
                 new MarkedTime(1L, LocalTime.of(7, 0), LocalTime.of(12, 30)),
-                new MarkedTime(2L, LocalTime.of(14, 0), LocalTime.of(17, 30))
+                new MarkedTime(2L, LocalTime.of(14, 0), LocalTime.of(17, 0))
         );
     }
 

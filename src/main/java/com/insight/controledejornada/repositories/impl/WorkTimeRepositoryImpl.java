@@ -12,26 +12,21 @@ public class WorkTimeRepositoryImpl extends GenericRepository<WorkTime> implemen
 
     private static final List<WorkTime> workTimes = new ArrayList<>();
 
-
     public void insert(WorkTime entity) {
         super.insert(entity, workTimes);
     }
-
 
     public WorkTime update(WorkTime entity) {
         return super.update(entity, workTimes);
     }
 
-
     public void delete(WorkTime entity) {
         super.delete(entity, workTimes);
     }
 
-
     public void deleteAll() {
         super.deleteAll(workTimes);
     }
-
 
     public Optional<WorkTime> findById(Long id) {
         return super.findById(id, workTimes);
@@ -45,5 +40,4 @@ public class WorkTimeRepositoryImpl extends GenericRepository<WorkTime> implemen
     public long getNextId() {
         return super.getNextId(workTimes);
     }
-
 }

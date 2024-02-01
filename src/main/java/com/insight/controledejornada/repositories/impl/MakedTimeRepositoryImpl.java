@@ -12,26 +12,21 @@ public class MakedTimeRepositoryImpl extends GenericRepository<MarkedTime> imple
 
     private static final List<MarkedTime> markedTimes = new ArrayList<>();
 
-
     public void insert(MarkedTime entity) {
         super.insert(entity, markedTimes);
     }
-
 
     public MarkedTime update(MarkedTime entity) {
         return super.update(entity, markedTimes);
     }
 
-
     public void delete(MarkedTime entity) {
         super.delete(entity, markedTimes);
     }
 
-
     public void deleteAll() {
         super.deleteAll(markedTimes);
     }
-
 
     public Optional<MarkedTime> findById(Long id) {
         return super.findById(id, markedTimes);
@@ -45,5 +40,4 @@ public class MakedTimeRepositoryImpl extends GenericRepository<MarkedTime> imple
     public long getNextId() {
         return super.getNextId(markedTimes);
     }
-
 }

@@ -63,7 +63,7 @@ public class MarkedTimeServiceImpl implements MarkedTimeService {
     public List<MarkedTimeDTO> listAll() {
         return this.markedTimeRepository.listAll()
                 .stream()
-                .map(it -> new MarkedTimeDTO(it.getId(),it.getInput().toString(),it.getOutput().toString()))
+                .map(it -> new MarkedTimeDTO(it.getId(), it.getInput().toString(), it.getOutput().toString()))
                 .collect(Collectors.toList());
     }
 

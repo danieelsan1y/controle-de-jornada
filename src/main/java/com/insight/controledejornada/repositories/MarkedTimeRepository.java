@@ -21,6 +21,4 @@ public interface MarkedTimeRepository {
     List<MarkedTime> listAll();
 
     long getNextId();
-
-
 }

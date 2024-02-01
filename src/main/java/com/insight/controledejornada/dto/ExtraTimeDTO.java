@@ -12,5 +12,4 @@ public class ExtraTimeDTO {
     private final String start;
 
     private final String end;
-
 }

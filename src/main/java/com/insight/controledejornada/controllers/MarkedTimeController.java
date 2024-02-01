@@ -39,7 +39,6 @@ public class MarkedTimeController extends HttpServlet {
                 .orElseThrow(() -> new SystemException("É necessário informar a saida."));
 
         markedTimeService.insert(new MarkedTimeDTO(null, input, output));
-
     }
 
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws SystemException {

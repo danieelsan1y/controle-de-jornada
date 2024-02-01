@@ -18,7 +18,4 @@ public abstract class Time {
     private LocalTime input;
 
     private LocalTime output;
-
-
-
 }

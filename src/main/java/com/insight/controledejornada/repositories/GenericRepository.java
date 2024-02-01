@@ -48,6 +48,5 @@ public class GenericRepository<T extends Time> {
     public long getNextId(List<T> times) {
         return times.size() + 1;
     }
-
 }
 

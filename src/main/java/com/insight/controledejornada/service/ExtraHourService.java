@@ -7,5 +7,4 @@ import java.util.List;
 public interface ExtraHourService {
 
     List<ExtraHour> getExtraHours();
-
 }

@@ -38,7 +38,6 @@ public class WorkTimeController extends HttpServlet {
         } else {
             throw new SystemException("tipo não válido");
         }
-
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws SystemException {
@@ -51,7 +50,6 @@ public class WorkTimeController extends HttpServlet {
                 .orElseThrow(() -> new SystemException("É necessário informar a saida."));
 
         workTimeService.insert(new WorkTimeDTO(null, input, output));
-
     }
 
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws SystemException {
