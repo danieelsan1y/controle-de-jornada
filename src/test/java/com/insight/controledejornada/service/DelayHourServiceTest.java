@@ -82,7 +82,7 @@ class DelayHourServiceTest {
     }
 
     @Test
-    public void test4() {
+    public void testDelaysDuringWorkHours04h00To05h00() {
         Mockito.when(this.workTimeRepository.listAll())
                 .thenReturn(getWorkScheduleExampleFour());
 
@@ -98,7 +98,7 @@ class DelayHourServiceTest {
     }
 
     @Test
-    public void test5() {
+    public void testDelaysDuringWorkHours22h00To03h00() {
         Mockito.when(this.workTimeRepository.listAll())
                 .thenReturn(getWorkScheduleExampleFour());
 
