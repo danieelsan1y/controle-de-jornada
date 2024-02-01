@@ -1,7 +1,6 @@
 package com.insight.controledejornada.model;
 
 import com.insight.controledejornada.dto.WorkTimeDTO;
-import com.insight.controledejornada.utils.HourUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,6 +14,10 @@ import static com.insight.controledejornada.utils.HourUtils.getLocalTime;
 @ToString
 public class WorkTime extends Time {
 
+    public WorkTime(Long id, LocalTime input, LocalTime output) {
+        super(id, input, output);
+    }
+
     public WorkTime(LocalTime input, LocalTime output) {
         super(null, input, output);
     }
@@ -22,4 +25,9 @@ public class WorkTime extends Time {
     public WorkTime(WorkTimeDTO dto) {
         super(dto.getId(), getLocalTime(dto.getInput()), getLocalTime(dto.getOutput()));
     }
+
+    public boolean spansToNextDay() {
+        return this.getInput().isAfter(this.getOutput());
+    }
+
 }

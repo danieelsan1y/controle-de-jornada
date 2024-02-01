@@ -21,7 +21,6 @@ public class MarkedTimeServiceImpl implements MarkedTimeService {
     public void insert(MarkedTimeDTO dto) {
         final MarkedTime markedTime = this.convertTo(dto);
         this.markedTimeRepository.insert(markedTime);
-
     }
 
     @Override

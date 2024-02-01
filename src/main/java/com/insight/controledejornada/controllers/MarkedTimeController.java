@@ -1,9 +1,9 @@
 package com.insight.controledejornada.controllers;
 
-import com.insight.controledejornada.dto.WorkTimeDTO;
+import com.insight.controledejornada.dto.MarkedTimeDTO;
 import com.insight.controledejornada.exception.SystemException;
-import com.insight.controledejornada.service.WorkTimeService;
-import com.insight.controledejornada.service.impl.WorkTimeServiceImpl;
+import com.insight.controledejornada.service.ExtraHourService;
+import com.insight.controledejornada.service.MarkedTimeService;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,31 +13,19 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
-@WebServlet(name = "workTime", value = "/workTime")
+@WebServlet(name = "markedTime", value = "/markedTime")
 @RequiredArgsConstructor
-public class WorkTimeController extends HttpServlet {
+public class MarkedTimeController extends HttpServlet {
 
-    private final WorkTimeService workTimeService;
+    private final MarkedTimeService markedTimeService;
+
+    private final ExtraHourService extraHourService;
 
     public void init() {
 
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws SystemException {
-        final String param = Optional.ofNullable(request.getParameter("type"))
-                .filter(StringUtils::isNoneBlank)
-                .orElseThrow(() -> new SystemException("É necessário informar o tipo."));
-
-        if (param.equals("list")) {
-            request.setAttribute("workTimes", this.workTimeService.listAll());
-        } else if (param.equals("find")) {
-            final String id = Optional.ofNullable(request.getParameter("id"))
-                    .filter(StringUtils::isNoneBlank)
-                    .orElseThrow(() -> new SystemException("id é necessário."));
-            request.setAttribute("workTIme", this.workTimeService.findById(Long.parseLong(id)));
-        } else {
-            throw new SystemException("tipo não válido");
-        }
 
     }
 
@@ -50,7 +38,7 @@ public class WorkTimeController extends HttpServlet {
                 .filter(StringUtils::isNoneBlank)
                 .orElseThrow(() -> new SystemException("É necessário informar a saida."));
 
-        workTimeService.insert(new WorkTimeDTO(null, input, output));
+        markedTimeService.insert(new MarkedTimeDTO(null, input, output));
 
     }
 

@@ -6,14 +6,16 @@ import com.insight.controledejornada.model.WorkTime;
 import com.insight.controledejornada.repositories.WorkTimeRepository;
 import com.insight.controledejornada.repositories.impl.WorkTimeRepositoryImpl;
 import com.insight.controledejornada.service.WorkTimeService;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class WorkTimeServiceImpl implements WorkTimeService {
 
-    private final WorkTimeRepository workTimeRepository = new WorkTimeRepositoryImpl();
+    private final WorkTimeRepository workTimeRepository;
 
     @Override
     public void insert(WorkTimeDTO dto) {
