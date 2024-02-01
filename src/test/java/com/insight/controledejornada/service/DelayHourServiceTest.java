@@ -81,6 +81,38 @@ class DelayHourServiceTest {
         Assertions.assertEquals(LocalTime.of(17, 30), delayHours.get(1).getEnd());
     }
 
+    @Test
+    public void test4() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(getWorkScheduleExampleFour());
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(getFirstRecordsExampleFour());
+
+        final List<DelayHour> delayHours = this.delayHourService.getDelayHours();
+
+        Assertions.assertEquals(1, delayHours.size());
+
+        Assertions.assertEquals(LocalTime.of(4, 0), delayHours.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(5, 0), delayHours.get(0).getEnd());
+    }
+
+    @Test
+    public void test5() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(getWorkScheduleExampleFour());
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(getSeccondRecordsExampleFour());
+
+        final List<DelayHour> delayHours = this.delayHourService.getDelayHours();
+
+        Assertions.assertEquals(1, delayHours.size());
+
+        Assertions.assertEquals(LocalTime.of(22, 0), delayHours.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(3, 0), delayHours.get(0).getEnd());
+    }
+
     private List<WorkTime> getWorkScheduleExampleOneAndTwo() {
         return List.of(new WorkTime(1L, LocalTime.of(8, 0), LocalTime.of(12, 0)));
     }
@@ -103,7 +135,7 @@ class DelayHourServiceTest {
     private List<MarkedTime> getSeccondRecordsExampleThree() {
         return List.of(
                 new MarkedTime(1L, LocalTime.of(7, 0), LocalTime.of(12, 30)),
-                new MarkedTime(2L, LocalTime.of(14, 0), LocalTime.of(17, 00))
+                new MarkedTime(2L, LocalTime.of(14, 0), LocalTime.of(17, 0))
         );
     }
 

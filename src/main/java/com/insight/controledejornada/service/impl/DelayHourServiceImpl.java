@@ -27,18 +27,76 @@ public class DelayHourServiceImpl implements DelayHourService {
 
         for (WorkTime workTime : workTimes) {
             for (MarkedTime markedTime : markedTimes) {
-                if ((workTime.getInput().isBefore(markedTime.getOutput()) && workTime.getOutput().isAfter(markedTime.getInput()))) {
-                    if (markedTime.getInput().isAfter(workTime.getInput())) {
-                        delayHours.add(new DelayHour(workTime.getInput(), markedTime.getInput()));
-                    }
-
-                    if (markedTime.getOutput().isBefore(workTime.getOutput())) {
-                        delayHours.add(new DelayHour(markedTime.getOutput(), workTime.getOutput()));
-                    }
-                }
+                this.process(workTime, markedTime, delayHours);
             }
         }
 
         return delayHours;
+    }
+
+    private void process(
+            WorkTime workTime,
+            MarkedTime markedTime,
+            List<DelayHour> delayHours
+    ) {
+        if (workTime.spansToNextDay()) {
+            this.processSpansToNextDay(workTime, markedTime, delayHours);
+        } else {
+            this.processNotSpansToNextDay(workTime, markedTime, delayHours);
+        }
+    }
+
+    private void processNotSpansToNextDay(
+            WorkTime workTime,
+            MarkedTime markedTime,
+            List<DelayHour> delayHours
+    ) {
+        if ((workTime.getInput().isBefore(markedTime.getOutput())
+                && workTime.getOutput().isAfter(markedTime.getInput()))) {
+            this.setMarkedTimeAsEntryAndExitDelays(workTime, markedTime, delayHours);
+        }
+    }
+
+    private void processSpansToNextDay(
+            WorkTime workTime,
+            MarkedTime markedTime,
+            List<DelayHour> delayHours
+    ) {
+        if (workTime.getInput().isAfter(markedTime.getOutput())
+                && workTime.getOutput().isBefore(markedTime.getInput())) {
+            this.setMarkedTimeAsEntryAndExitDelays(workTime, markedTime, delayHours);
+        }
+        if (workTime.getInput().isAfter(markedTime.getOutput())
+                && workTime.getOutput().isAfter(markedTime.getInput())) {
+            this.processWorkTimeAsEntryAndExitDelays(workTime, markedTime, delayHours);
+        }
+    }
+
+    private void setMarkedTimeAsEntryAndExitDelays(
+            WorkTime workTime,
+            MarkedTime markedTime,
+            List<DelayHour> delayHours
+    ) {
+        if (markedTime.getInput().isAfter(workTime.getInput())) {
+            delayHours.add(new DelayHour(workTime.getInput(), markedTime.getInput()));
+        }
+
+        if (markedTime.getOutput().isBefore(workTime.getOutput())) {
+            delayHours.add(new DelayHour(markedTime.getOutput(), workTime.getOutput()));
+        }
+    }
+
+    private void processWorkTimeAsEntryAndExitDelays(
+            WorkTime workTime,
+            MarkedTime markedTime,
+            List<DelayHour> delayHours
+    ) {
+        if (workTime.getInput().isAfter(markedTime.getInput())) {
+            delayHours.add(new DelayHour(workTime.getInput(), markedTime.getInput()));
+        }
+
+        if (workTime.getOutput().isBefore(workTime.getOutput())) {
+            delayHours.add(new DelayHour(markedTime.getOutput(), workTime.getOutput()));
+        }
     }
 }
