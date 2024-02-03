@@ -12,7 +12,7 @@ public interface MarkedTimeRepository {
 
     MarkedTime update(MarkedTime entity);
 
-    void delete(MarkedTime entity);
+    void delete(long id);
 
     void deleteAll();
 

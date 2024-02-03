@@ -12,11 +12,12 @@ public interface WorkTimeService {
 
     WorkTimeDTO update(WorkTimeDTO dto);
 
-    void delete(WorkTimeDTO dto);
+    void delete(String id);
 
     void deleteAll();
 
     WorkTimeDTO findById(Long id);
 
     List<WorkTimeDTO> listAll();
+
 }

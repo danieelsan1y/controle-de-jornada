@@ -20,8 +20,8 @@ public class MakedTimeRepositoryImpl extends GenericRepository<MarkedTime> imple
         return super.update(entity, markedTimes);
     }
 
-    public void delete(MarkedTime entity) {
-        super.delete(entity, markedTimes);
+    public void delete(long id) {
+        super.delete(id, markedTimes);
     }
 
     public void deleteAll() {

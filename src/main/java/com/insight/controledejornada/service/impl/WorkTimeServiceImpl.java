@@ -7,6 +7,7 @@ import com.insight.controledejornada.repositories.WorkTimeRepository;
 import com.insight.controledejornada.repositories.impl.WorkTimeRepositoryImpl;
 import com.insight.controledejornada.service.WorkTimeService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,12 +41,13 @@ public class WorkTimeServiceImpl implements WorkTimeService {
     }
 
     @Override
-    public void delete(WorkTimeDTO dto) {
-        this.validate(dto);
+    public void delete(String id) {
+        long idFormatted = Optional.ofNullable(id)
+                .filter(StringUtils::isNotBlank)
+                .map(Long::parseLong)
+                .orElseThrow(() -> new SystemException("id é requerido para remoção."));
 
-        final WorkTime workTime = this.convertTo(dto);
-
-        this.workTimeRepository.delete(workTime);
+        this.workTimeRepository.delete(idFormatted);
     }
 
     @Override

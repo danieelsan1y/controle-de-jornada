@@ -1,0 +1,10 @@
+#init h2,
+#init button,
+#init {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.buton-blue{
+    margin-right: 8px;
+}

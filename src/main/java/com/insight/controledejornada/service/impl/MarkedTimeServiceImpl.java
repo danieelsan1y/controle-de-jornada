@@ -8,14 +8,17 @@ import com.insight.controledejornada.model.WorkTime;
 import com.insight.controledejornada.repositories.MarkedTimeRepository;
 import com.insight.controledejornada.repositories.impl.MakedTimeRepositoryImpl;
 import com.insight.controledejornada.service.MarkedTimeService;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class MarkedTimeServiceImpl implements MarkedTimeService {
 
-    final MarkedTimeRepository markedTimeRepository = new MakedTimeRepositoryImpl();
+    final MarkedTimeRepository markedTimeRepository;
 
     @Override
     public void insert(MarkedTimeDTO dto) {
@@ -35,12 +38,13 @@ public class MarkedTimeServiceImpl implements MarkedTimeService {
     }
 
     @Override
-    public void delete(MarkedTimeDTO dto) {
-        this.validate(dto);
+    public void delete(String id) {
+        long idFormatted = Optional.ofNullable(id)
+                .filter(StringUtils::isNotBlank)
+                .map(Long::parseLong)
+                .orElseThrow(() -> new SystemException("id é requerido para remoção."));
 
-        final MarkedTime markedTime = this.convertTo(dto);
-
-        this.markedTimeRepository.delete(markedTime);
+        this.markedTimeRepository.delete(idFormatted);
     }
 
     @Override

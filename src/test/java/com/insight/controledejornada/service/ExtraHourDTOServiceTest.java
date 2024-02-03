@@ -1,6 +1,6 @@
 package com.insight.controledejornada.service;
 
-import com.insight.controledejornada.model.ExtraHour;
+import com.insight.controledejornada.dto.ExtraHourDTO;
 import com.insight.controledejornada.model.MarkedTime;
 import com.insight.controledejornada.model.WorkTime;
 import com.insight.controledejornada.repositories.MarkedTimeRepository;
@@ -18,7 +18,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
-class ExtraHourServiceTest {
+class ExtraHourDTOServiceTest {
 
     private WorkTimeRepository workTimeRepository;
 
@@ -41,12 +41,12 @@ class ExtraHourServiceTest {
         Mockito.when(this.markedTimeRepository.listAll())
                 .thenReturn(getRecordsExampleOneAndTwo());
 
-        final List<ExtraHour> extraHours = this.extraHourService.getExtraHours();
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
 
-        Assertions.assertEquals(1, extraHours.size());
+        Assertions.assertEquals(1, extraHourDTOS.size());
 
-        Assertions.assertEquals(LocalTime.of(7, 0), extraHours.get(0).getStart());
-        Assertions.assertEquals(LocalTime.of(8, 0), extraHours.get(0).getEnd());
+        Assertions.assertEquals(LocalTime.of(7, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(8, 0), extraHourDTOS.get(0).getEnd());
     }
 
     @Test
@@ -57,18 +57,18 @@ class ExtraHourServiceTest {
         Mockito.when(this.markedTimeRepository.listAll())
                 .thenReturn(getFirstRecordsExampleThree());
 
-        final List<ExtraHour> extraHours = this.extraHourService.getExtraHours();
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
 
-        Assertions.assertEquals(3, extraHours.size());
+        Assertions.assertEquals(3, extraHourDTOS.size());
 
-        Assertions.assertEquals(LocalTime.of(6, 0), extraHours.get(0).getStart());
-        Assertions.assertEquals(LocalTime.of(8, 0), extraHours.get(0).getEnd());
+        Assertions.assertEquals(LocalTime.of(6, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(8, 0), extraHourDTOS.get(0).getEnd());
 
-        Assertions.assertEquals(LocalTime.of(12, 0), extraHours.get(1).getStart());
-        Assertions.assertEquals(LocalTime.of(13, 30), extraHours.get(1).getEnd());
+        Assertions.assertEquals(LocalTime.of(12, 0), extraHourDTOS.get(1).getStart());
+        Assertions.assertEquals(LocalTime.of(13, 30), extraHourDTOS.get(1).getEnd());
 
-        Assertions.assertEquals(LocalTime.of(17, 30), extraHours.get(2).getStart());
-        Assertions.assertEquals(LocalTime.of(20, 0), extraHours.get(2).getEnd());
+        Assertions.assertEquals(LocalTime.of(17, 30), extraHourDTOS.get(2).getStart());
+        Assertions.assertEquals(LocalTime.of(20, 0), extraHourDTOS.get(2).getEnd());
     }
 
     @Test
@@ -79,15 +79,15 @@ class ExtraHourServiceTest {
         Mockito.when(this.markedTimeRepository.listAll())
                 .thenReturn(getSeccondRecordsExampleThree());
 
-        final List<ExtraHour> extraHours = this.extraHourService.getExtraHours();
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
 
-        Assertions.assertEquals(2, extraHours.size());
+        Assertions.assertEquals(2, extraHourDTOS.size());
 
-        Assertions.assertEquals(LocalTime.of(7, 0), extraHours.get(0).getStart());
-        Assertions.assertEquals(LocalTime.of(8, 0), extraHours.get(0).getEnd());
+        Assertions.assertEquals(LocalTime.of(7, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(8, 0), extraHourDTOS.get(0).getEnd());
 
-        Assertions.assertEquals(LocalTime.of(12, 0), extraHours.get(1).getStart());
-        Assertions.assertEquals(LocalTime.of(12, 30), extraHours.get(1).getEnd());
+        Assertions.assertEquals(LocalTime.of(12, 0), extraHourDTOS.get(1).getStart());
+        Assertions.assertEquals(LocalTime.of(12, 30), extraHourDTOS.get(1).getEnd());
     }
 
     @Test
@@ -98,12 +98,12 @@ class ExtraHourServiceTest {
         Mockito.when(this.markedTimeRepository.listAll())
                 .thenReturn(getFirstRecordsExampleFour());
 
-        final List<ExtraHour> extraHours = this.extraHourService.getExtraHours();
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
 
-        Assertions.assertEquals(1, extraHours.size());
+        Assertions.assertEquals(1, extraHourDTOS.size());
 
-        Assertions.assertEquals(LocalTime.of(21, 0), extraHours.get(0).getStart());
-        Assertions.assertEquals(LocalTime.of(22, 0), extraHours.get(0).getEnd());
+        Assertions.assertEquals(LocalTime.of(21, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(22, 0), extraHourDTOS.get(0).getEnd());
     }
 
     @Test
@@ -114,12 +114,12 @@ class ExtraHourServiceTest {
         Mockito.when(this.markedTimeRepository.listAll())
                 .thenReturn(getSeccondRecordsExampleFour());
 
-        final List<ExtraHour> extraHours = this.extraHourService.getExtraHours();
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
 
-        Assertions.assertEquals(1, extraHours.size());
+        Assertions.assertEquals(1, extraHourDTOS.size());
 
-        Assertions.assertEquals(LocalTime.of(5, 0), extraHours.get(0).getStart());
-        Assertions.assertEquals(LocalTime.of(7, 0), extraHours.get(0).getEnd());
+        Assertions.assertEquals(LocalTime.of(5, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(7, 0), extraHourDTOS.get(0).getEnd());
     }
 
     private List<WorkTime> getWorkScheduleExampleOneAndTwo() {

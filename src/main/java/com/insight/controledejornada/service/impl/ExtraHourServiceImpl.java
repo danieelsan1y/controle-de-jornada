@@ -1,5 +1,6 @@
 package com.insight.controledejornada.service.impl;
 
+import com.insight.controledejornada.dto.ExtraHourDTO;
 import com.insight.controledejornada.model.*;
 import com.insight.controledejornada.repositories.MarkedTimeRepository;
 import com.insight.controledejornada.repositories.WorkTimeRepository;
@@ -17,7 +18,7 @@ public class ExtraHourServiceImpl implements ExtraHourService {
 
     private final MarkedTimeRepository markedTimeRepository;
 
-    public List<ExtraHour> getExtraHours() {
+    public List<ExtraHourDTO> getExtraHours() {
         final List<WorkTime> workTimes = this.workTimeRepository.listAll();
         final List<MarkedTime> markedTimes = this.markedTimeRepository.listAll();
 
@@ -25,34 +26,34 @@ public class ExtraHourServiceImpl implements ExtraHourService {
             return Collections.emptyList();
         }
 
-        final List<ExtraHour> extraHours = new ArrayList<>(0);
+        final List<ExtraHourDTO> extraHourDTOS = new ArrayList<>(0);
         final List<Interval> intervals = getIntervals(workTimes);
 
         final WorkTime first = workTimes.stream().findFirst().orElseThrow(RuntimeException::new);
         final WorkTime last = workTimes.get(workTimes.size() - 1);
 
-        this.setExtraHours(markedTimes, first, extraHours, intervals, last);
+        this.setExtraHours(markedTimes, first, extraHourDTOS, intervals, last);
 
-        return extraHours.stream()
-                .sorted(Comparator.comparing(ExtraHour::getStart))
+        return extraHourDTOS.stream()
+                .sorted(Comparator.comparing(ExtraHourDTO::getStart))
                 .collect(Collectors.toList());
     }
 
     private void setExtraHours(
             List<MarkedTime> markedTimes,
             WorkTime first,
-            List<ExtraHour> extraHours,
+            List<ExtraHourDTO> extraHourDTOS,
             List<Interval> intervals,
             WorkTime last
     ) {
         markedTimes.stream()
                 .filter(Objects::nonNull)
                 .forEach(it -> {
-                    this.setOvertimeBeforeWork(first, extraHours, it);
+                    this.setOvertimeBeforeWork(first, extraHourDTOS, it);
 
-                    this.setOvertimeDuringTheBreak(it, intervals, extraHours);
+                    this.setOvertimeDuringTheBreak(it, intervals, extraHourDTOS);
 
-                    this.setOvertimeAfterWork(extraHours, last, it);
+                    this.setOvertimeAfterWork(extraHourDTOS, last, it);
                 });
     }
 
@@ -68,32 +69,32 @@ public class ExtraHourServiceImpl implements ExtraHourService {
 
     private void setOvertimeBeforeWork(
             WorkTime first,
-            List<ExtraHour> extraHours,
+            List<ExtraHourDTO> extraHourDTOS,
             MarkedTime markedTime
     ) {
         if (markedTime.getInput().isBefore(first.getInput())) {
             if (first.spansToNextDay() && markedTime.getInput().isAfter(first.getOutput())) {
-                extraHours.add(new ExtraHour(markedTime.getInput(), first.getInput()));
+                extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), first.getInput()));
             } else if (!first.spansToNextDay()) {
-                extraHours.add(new ExtraHour(markedTime.getInput(), first.getInput()));
+                extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), first.getInput()));
             }
         }
     }
 
     private void setOvertimeAfterWork(
-            List<ExtraHour> extraHours,
+            List<ExtraHourDTO> extraHourDTOS,
             WorkTime last,
             MarkedTime markedTime
     ) {
         if (last != null && markedTime.getOutput().isAfter(last.getOutput())) {
-            extraHours.add(new ExtraHour(last.getOutput(), markedTime.getOutput()));
+            extraHourDTOS.add(new ExtraHourDTO(last.getOutput(), markedTime.getOutput()));
         }
     }
 
     private void setOvertimeDuringTheBreak(
             MarkedTime markedTime,
             List<Interval> intervals,
-            List<ExtraHour> extraHours
+            List<ExtraHourDTO> extraHourDTOS
     ) {
         final LocalTime markedTimeInput = markedTime.getInput();
         final LocalTime markedTimeOutput = markedTime.getOutput();
@@ -102,7 +103,7 @@ public class ExtraHourServiceImpl implements ExtraHourService {
                 .forEach(interval ->
                         this.processInterval(
                                 markedTime,
-                                extraHours,
+                                extraHourDTOS,
                                 interval,
                                 markedTimeOutput,
                                 markedTimeInput
@@ -112,7 +113,7 @@ public class ExtraHourServiceImpl implements ExtraHourService {
 
     private void processInterval(
             MarkedTime markedTime,
-            List<ExtraHour> extraHours,
+            List<ExtraHourDTO> extraHourDTOS,
             Interval interval,
             LocalTime markedTimeOutput,
             LocalTime markedTimeInput
@@ -122,18 +123,18 @@ public class ExtraHourServiceImpl implements ExtraHourService {
 
         if ((markedTime.getInput().isBefore(intervalInput) || markedTime.getInput().equals(intervalInput))
                 && (markedTimeOutput.isAfter(intervalOutput) || markedTimeOutput.equals(intervalOutput))) {
-            extraHours.add(new ExtraHour(intervalInput, intervalOutput));
+            extraHourDTOS.add(new ExtraHourDTO(intervalInput, intervalOutput));
         } else if ((markedTimeInput.isBefore(intervalInput) || markedTime.getInput().equals(intervalInput))
                 && markedTimeOutput.isAfter(intervalInput) && markedTimeOutput.isBefore(intervalOutput)) {
-            extraHours.add(new ExtraHour(intervalInput, markedTimeOutput));
+            extraHourDTOS.add(new ExtraHourDTO(intervalInput, markedTimeOutput));
         }
         if (markedTimeInput.isAfter(intervalInput) && markedTimeInput.isBefore(intervalOutput) &&
                 (markedTimeOutput.isAfter(intervalOutput) || markedTimeOutput.equals(intervalOutput))) {
-            extraHours.add(new ExtraHour(markedTimeInput, intervalOutput));
+            extraHourDTOS.add(new ExtraHourDTO(markedTimeInput, intervalOutput));
         }
         if (markedTimeInput.isAfter(intervalInput) && markedTime.getInput().isBefore(intervalOutput)
                 && markedTimeOutput.isBefore(intervalOutput) && markedTimeOutput.isAfter(intervalInput)) {
-            extraHours.add(new ExtraHour(markedTimeInput, intervalOutput));
+            extraHourDTOS.add(new ExtraHourDTO(markedTimeInput, intervalOutput));
         }
     }
 }

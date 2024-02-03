@@ -25,10 +25,11 @@ public class GenericRepository<T extends Time> {
         return time;
     }
 
-    public void delete(T time, List<T> times) {
+    public void delete(long id, List<T> times) {
         times.stream()
-                .filter(it -> it.getId().equals(time.getId()))
-                .forEach(times::remove);
+                .filter(it -> it.getId().equals(id))
+                .findFirst()
+                .ifPresent(times::remove);
     }
 
     public void deleteAll(List<T> times) {

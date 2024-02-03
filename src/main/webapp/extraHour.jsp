@@ -1,10 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page contentType="text/html; charset=utf-8"
          pageEncoding="utf-8" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="com.insight.controledejornada.dto.MarkedTimeDTO" %>
+<%@ page import="com.insight.controledejornada.dto.ExtraHourDTO" %>
 <%
     @SuppressWarnings("unchecked")
-    final ArrayList<MarkedTimeDTO> markedTimesDTO = (ArrayList<MarkedTimeDTO>) request.getAttribute("markedTimesDTO");
+    final ArrayList<ExtraHourDTO> extraHourDTO = (ArrayList<ExtraHourDTO>) request.getAttribute("extraHoursDTO");
 %>
 <!DOCTYPE html>
 <html>
@@ -28,9 +28,7 @@
 <div id="navbar-container"></div>
 <div class="container">
     <div id="init">
-        <h2>Marcações Feitas</h2>
-        <a href="form.html" class="buton-blue"> + </a>
-        <a href="markedTime?type=deleteAll" class="button-red"> Remover todos </a>
+        <h2>Horas extras</h2>
     </div>
     <div class="container">
         <div class="container">
@@ -40,30 +38,20 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Entrada</th>
-                            <th>Saída</th>
-                            <th>Ação</th>
+                            <th>Início</th>
+                            <th>Fim</th>
                         </tr>
                         </thead>
                         <tbody>
                         <%
-                            for (int i = 0; i < markedTimesDTO.size(); i++) {
+                            for (int i = 0; i < extraHourDTO.size(); i++) {
                         %>
                         <tr>
-                            <td><%=markedTimesDTO.get(i).getId()%>
+                            <td><%=i + 1%>
                             </td>
-                            <td><%=markedTimesDTO.get(i).getInput()%>
+                            <td><%=extraHourDTO.get(i).getStart()%>
                             </td>
-                            <td><%=markedTimesDTO.get(i).getOutput()%>
-                            </td>
-                            <td>
-                                <a href="markedTime?type=delete&id=<%= markedTimesDTO.get(i).getId() %>">
-                                    <i class="bi bi-dash-circle"></i>
-                                </a>
-                                <a href="form.html">
-                                    <i class="bi bi-arrow-clockwise"></i>
-                                </a>
-
+                            <td><%=extraHourDTO.get(i).getEnd()%>
                             </td>
                         </tr>
                         <%

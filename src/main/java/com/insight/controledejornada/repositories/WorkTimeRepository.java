@@ -11,7 +11,7 @@ public interface WorkTimeRepository {
 
     WorkTime update(WorkTime entity);
 
-    void delete(WorkTime entity);
+    void delete(long id);
 
     void deleteAll();
 

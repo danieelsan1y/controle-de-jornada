@@ -20,8 +20,9 @@ public class WorkTimeRepositoryImpl extends GenericRepository<WorkTime> implemen
         return super.update(entity, workTimes);
     }
 
-    public void delete(WorkTime entity) {
-        super.delete(entity, workTimes);
+    @Override
+    public void delete(long id) {
+        super.delete(id, workTimes);
     }
 
     public void deleteAll() {

@@ -1,11 +1,11 @@
 package com.insight.controledejornada.service;
 
-import com.insight.controledejornada.model.DelayHour;
+import com.insight.controledejornada.dto.DelayHourDTO;
 
 import java.util.List;
 
 public interface DelayHourService {
 
-    List<DelayHour> getDelayHours();
+    List<DelayHourDTO> getDelayHours();
 
 }

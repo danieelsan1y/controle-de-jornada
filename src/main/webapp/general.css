@@ -1,0 +1,15 @@
+.buton-blue {
+    padding: 6px 10px;
+    background-color: darkblue;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.button-red {
+    padding: 6px 10px;
+    background-color: red;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}

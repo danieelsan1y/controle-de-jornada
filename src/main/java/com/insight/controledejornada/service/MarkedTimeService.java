@@ -11,7 +11,7 @@ public interface MarkedTimeService {
 
     MarkedTimeDTO update(MarkedTimeDTO dto);
 
-    void delete(MarkedTimeDTO dto);
+    void delete(String id);
 
     void deleteAll();
 
