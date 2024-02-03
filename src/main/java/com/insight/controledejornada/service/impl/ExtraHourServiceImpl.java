@@ -22,8 +22,8 @@ public class ExtraHourServiceImpl implements ExtraHourService {
         final List<WorkTime> workTimes = this.workTimeRepository.listAll();
         final List<MarkedTime> markedTimes = this.markedTimeRepository.listAll();
 
-        if (workTimes.isEmpty() || markedTimes.isEmpty()) {
-            return Collections.emptyList();
+        if(workTimes.isEmpty() || markedTimes.isEmpty()) {
+            return new ArrayList<>(0);
         }
 
         final List<ExtraHourDTO> extraHourDTOS = new ArrayList<>(0);

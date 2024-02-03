@@ -4,7 +4,7 @@
 <%@ page import="com.insight.controledejornada.dto.ExtraHourDTO" %>
 <%
     @SuppressWarnings("unchecked")
-    final ArrayList<ExtraHourDTO> extraHourDTO = (ArrayList<ExtraHourDTO>) request.getAttribute("extraHoursDTO");
+    final ArrayList<ExtraHourDTO> extraHoursDTO = (ArrayList<ExtraHourDTO>) request.getAttribute("extraHoursDTO");
 %>
 <!DOCTYPE html>
 <html>
@@ -44,14 +44,14 @@
                         </thead>
                         <tbody>
                         <%
-                            for (int i = 0; i < extraHourDTO.size(); i++) {
+                            for (int i = 0; i < extraHoursDTO.size(); i++) {
                         %>
                         <tr>
                             <td><%=i + 1%>
                             </td>
-                            <td><%=extraHourDTO.get(i).getStart()%>
+                            <td><%=extraHoursDTO.get(i).getStart()%>
                             </td>
-                            <td><%=extraHourDTO.get(i).getEnd()%>
+                            <td><%=extraHoursDTO.get(i).getEnd()%>
                             </td>
                         </tr>
                         <%
