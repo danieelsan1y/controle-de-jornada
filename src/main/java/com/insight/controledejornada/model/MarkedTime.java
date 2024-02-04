@@ -1,7 +1,6 @@
 package com.insight.controledejornada.model;
 
 import com.insight.controledejornada.dto.MarkedTimeDTO;
-import com.insight.controledejornada.utils.HourUtils;
 import lombok.Getter;
 import lombok.Setter;
 

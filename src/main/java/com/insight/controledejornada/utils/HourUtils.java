@@ -9,7 +9,6 @@ import static java.lang.Integer.parseInt;
 
 public class HourUtils {
 
-
     public static LocalTime getLocalTime(String content) {
         if (!content.contains(":")) {
             throw new SystemException(WRONG_HOUR_AND_MINUTE);

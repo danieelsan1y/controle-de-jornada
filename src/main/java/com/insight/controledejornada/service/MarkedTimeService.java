@@ -1,7 +1,6 @@
 package com.insight.controledejornada.service;
 
 import com.insight.controledejornada.dto.MarkedTimeDTO;
-import com.insight.controledejornada.dto.WorkTimeDTO;
 
 import java.util.List;
 

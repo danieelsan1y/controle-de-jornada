@@ -7,6 +7,7 @@ import com.insight.controledejornada.repositories.impl.WorkTimeRepositoryImpl;
 import java.time.LocalTime;
 
 public class Application {
+
     public static void main(String[] args) {
     }
 }

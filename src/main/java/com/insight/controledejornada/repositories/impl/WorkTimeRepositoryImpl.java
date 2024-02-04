@@ -1,6 +1,5 @@
 package com.insight.controledejornada.repositories.impl;
 
-import com.insight.controledejornada.dto.ExtraHourDTO;
 import com.insight.controledejornada.model.WorkTime;
 import com.insight.controledejornada.repositories.GenericRepository;
 import com.insight.controledejornada.repositories.WorkTimeRepository;

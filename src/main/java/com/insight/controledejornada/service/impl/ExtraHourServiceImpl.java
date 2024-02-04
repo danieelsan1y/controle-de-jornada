@@ -1,14 +1,19 @@
 package com.insight.controledejornada.service.impl;
 
 import com.insight.controledejornada.dto.ExtraHourDTO;
-import com.insight.controledejornada.model.*;
+import com.insight.controledejornada.model.Interval;
+import com.insight.controledejornada.model.MarkedTime;
+import com.insight.controledejornada.model.WorkTime;
 import com.insight.controledejornada.repositories.MarkedTimeRepository;
 import com.insight.controledejornada.repositories.WorkTimeRepository;
 import com.insight.controledejornada.service.ExtraHourService;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor

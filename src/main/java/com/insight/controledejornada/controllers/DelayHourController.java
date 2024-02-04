@@ -17,8 +17,6 @@ import java.io.IOException;
 @WebServlet(name = "delayhour", value = "/delayHour")
 public class DelayHourController extends HttpServlet {
 
-    static int teste = 0;
-
     private final DelayHourService delayHourService = new DelayHourServiceImpl(new WorkTimeRepositoryImpl(), new MakedTimeRepositoryImpl());
 
     public void init() {

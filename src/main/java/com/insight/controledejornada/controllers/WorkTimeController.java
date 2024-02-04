@@ -2,8 +2,6 @@ package com.insight.controledejornada.controllers;
 
 import com.insight.controledejornada.dto.WorkTimeDTO;
 import com.insight.controledejornada.exception.SystemException;
-import com.insight.controledejornada.model.MarkedTime;
-import com.insight.controledejornada.model.Param;
 import com.insight.controledejornada.model.ParamContent;
 import com.insight.controledejornada.model.WorkTime;
 import com.insight.controledejornada.repositories.impl.WorkTimeRepositoryImpl;
