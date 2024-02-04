@@ -41,14 +41,4 @@ public class ExtraHourController extends HttpServlet {
         request.setAttribute("extraHoursDTO", this.extraHourService.getExtraHours());
         requestDispatcher.forward(request, response);
     }
-
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws SystemException {
-    }
-
-    public void doPut(HttpServletRequest request, HttpServletResponse response) throws SystemException {
-
-    }
-
-    public void destroy() {
-    }
 }

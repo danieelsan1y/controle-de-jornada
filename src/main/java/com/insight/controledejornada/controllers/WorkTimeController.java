@@ -80,9 +80,6 @@ public class WorkTimeController extends HttpServlet {
         this.workTimeService.update(new WorkTimeDTO(Long.parseLong(id), input, output));
     }
 
-    public void destroy() {
-    }
-
     private void processRequestByParam(HttpServletRequest request, String param, String id) {
         switch (Param.valueOfBy(param)) {
             case LIST:

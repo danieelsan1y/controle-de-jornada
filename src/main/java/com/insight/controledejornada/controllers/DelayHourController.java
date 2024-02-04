@@ -44,14 +44,4 @@ public class DelayHourController extends HttpServlet {
         request.setAttribute("delayHourDTO", this.delayHourService.getDelayHours());
         requestDispatcher.forward(request, response);
     }
-
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws SystemException {
-    }
-
-    public void doPut(HttpServletRequest request, HttpServletResponse response) throws SystemException {
-
-    }
-
-    public void destroy() {
-    }
 }

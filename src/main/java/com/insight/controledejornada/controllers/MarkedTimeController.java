@@ -84,9 +84,6 @@ public class MarkedTimeController extends HttpServlet {
         this.markedTimeService.update(new MarkedTimeDTO(Long.parseLong(id), input, output));
     }
 
-    public void destroy() {
-    }
-
     private void processRequestByParam(HttpServletRequest request, String param, String id) {
         switch (Param.valueOfBy(param)) {
             case LIST:
