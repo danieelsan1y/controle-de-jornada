@@ -34,12 +34,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     alert("Sucesso!");
                     window.location.href = 'markedTime?type=list';
                 } else {
-                    alert('Ocorreu um erro inesperado');
-                    console.error('Erro na requisição. Status:', response.status);
+                    return response.text();
                 }
             })
+            .then(errorMessage => {
+                console.log(errorMessage)
+                const match = errorMessage.match(/error:(.*?)\./);
+                const errorMessageText = match ? match[1].trim() : 'Ocorreu um erro inesperado';
+
+                alert(errorMessageText);
+            })
             .catch(error => {
-                alert('Ocorreu um erro inesperado: ' + error.message);
                 console.error('Erro na requisição:', error);
             });
     }

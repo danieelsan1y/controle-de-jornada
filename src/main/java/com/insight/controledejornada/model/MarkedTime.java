@@ -13,6 +13,8 @@ import static com.insight.controledejornada.utils.HourUtils.getLocalTime;
 @Setter
 public class MarkedTime extends Time implements Comparable<MarkedTime> {
 
+    public final static String pageName = "markedTime.jsp";
+
     public MarkedTime(Long id, LocalTime input, LocalTime output) {
         super(id, input, output);
     }

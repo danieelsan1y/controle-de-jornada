@@ -7,6 +7,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MarkedTimeDTO {
 
+    public static String name = "markedTimeDTO";
+
+    public static String listName = "markedTimesDTO";
+
     private final Long id;
 
     private final String input;

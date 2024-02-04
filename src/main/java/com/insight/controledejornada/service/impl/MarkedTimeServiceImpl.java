@@ -1,12 +1,9 @@
 package com.insight.controledejornada.service.impl;
 
 import com.insight.controledejornada.dto.MarkedTimeDTO;
-import com.insight.controledejornada.dto.WorkTimeDTO;
 import com.insight.controledejornada.exception.SystemException;
 import com.insight.controledejornada.model.MarkedTime;
-import com.insight.controledejornada.model.WorkTime;
 import com.insight.controledejornada.repositories.MarkedTimeRepository;
-import com.insight.controledejornada.repositories.impl.MakedTimeRepositoryImpl;
 import com.insight.controledejornada.service.MarkedTimeService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.insight.controledejornada.exception.Message.*;
 
 @RequiredArgsConstructor
 public class MarkedTimeServiceImpl implements MarkedTimeService {
@@ -34,7 +33,7 @@ public class MarkedTimeServiceImpl implements MarkedTimeService {
         return Optional.ofNullable(this.markedTimeRepository.findById(markedTime.getId()))
                 .map(it -> this.markedTimeRepository.update(markedTime))
                 .map(it -> new MarkedTimeDTO(it.getId(), it.getInput().toString(), it.getOutput().toString()))
-                .orElseThrow(() -> new SystemException("Não foi possível atualizar"));
+                .orElseThrow(() -> new SystemException(UNABLE_TO_UPDATE));
     }
 
     @Override
@@ -42,7 +41,7 @@ public class MarkedTimeServiceImpl implements MarkedTimeService {
         long idFormatted = Optional.ofNullable(id)
                 .filter(StringUtils::isNotBlank)
                 .map(Long::parseLong)
-                .orElseThrow(() -> new SystemException("id é requerido para remoção."));
+                .orElseThrow(() -> new SystemException(ID_REQUIRED));
 
         this.markedTimeRepository.delete(idFormatted);
     }
@@ -55,12 +54,12 @@ public class MarkedTimeServiceImpl implements MarkedTimeService {
     @Override
     public MarkedTimeDTO findById(Long id) {
         if (id == null || id <= 0) {
-            throw new SystemException("id é requerido");
+            throw new SystemException(ID_REQUIRED);
         }
 
         return this.markedTimeRepository.findById(id)
                 .map(it -> new MarkedTimeDTO(it.getId(), it.getInput().toString(), it.getOutput().toString()))
-                .orElseThrow(() -> new SystemException("o Objeto 'workTime' não foi encontrado"));
+                .orElseThrow(() -> new SystemException(MARKED_TIME_NOT_FOUND));
     }
 
     @Override
@@ -73,7 +72,7 @@ public class MarkedTimeServiceImpl implements MarkedTimeService {
 
     private void validate(MarkedTimeDTO dto) {
         if (dto == null) {
-            throw new SystemException("O Objeto 'workTime' não pode ser nulo");
+            throw new SystemException(MARKED_TIME_NOT_NULL);
         }
     }
 

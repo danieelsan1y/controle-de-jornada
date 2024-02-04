@@ -1,11 +1,9 @@
 package com.insight.controledejornada.controllers;
 
 import com.insight.controledejornada.dto.MarkedTimeDTO;
-import com.insight.controledejornada.dto.WorkTimeDTO;
 import com.insight.controledejornada.exception.SystemException;
-import com.insight.controledejornada.model.Param;
+import com.insight.controledejornada.model.ParamContent;
 import com.insight.controledejornada.repositories.impl.MakedTimeRepositoryImpl;
-import com.insight.controledejornada.service.ExtraHourService;
 import com.insight.controledejornada.service.MarkedTimeService;
 import com.insight.controledejornada.service.impl.MarkedTimeServiceImpl;
 import jakarta.servlet.RequestDispatcher;
@@ -14,11 +12,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Optional;
+
+import static com.insight.controledejornada.exception.Message.*;
+import static com.insight.controledejornada.model.MarkedTime.pageName;
+import static com.insight.controledejornada.model.Param.*;
 
 @WebServlet(name = "markedTime", value = "/markedTime")
 public class MarkedTimeController extends HttpServlet {
@@ -33,17 +34,17 @@ public class MarkedTimeController extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws SystemException, ServletException, IOException {
-        String param = "list";
+        String content = ParamContent.LIST.getName();
 
-        if (StringUtils.isNotBlank(request.getParameter("type"))) {
-            param = request.getParameter("type");
+        if (StringUtils.isNotBlank(request.getParameter(TYPE.getName()))) {
+            content = request.getParameter(TYPE.getName());
         }
 
-        final String id = request.getParameter("id");
+        final String id = request.getParameter(ID.getName());
 
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher("markedTime.jsp");
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(pageName);
 
-        this.processRequestByParam(request, param, id);
+        this.processRequestByParam(request, content, id);
 
         this.setAttribute(request);
 
@@ -51,17 +52,17 @@ public class MarkedTimeController extends HttpServlet {
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws SystemException, ServletException, IOException {
-        final String input = Optional.ofNullable(request.getParameter("input"))
+        final String input = Optional.ofNullable(request.getParameter(INPUT.getName()))
                 .filter(StringUtils::isNoneBlank)
-                .orElseThrow(() -> new SystemException("É necessário informar a entrada."));
+                .orElseThrow(() -> new SystemException(INPUT_REQUIRED));
 
-        final String output = Optional.ofNullable(request.getParameter("output"))
+        final String output = Optional.ofNullable(request.getParameter(OUTPUT.getName()))
                 .filter(StringUtils::isNoneBlank)
-                .orElseThrow(() -> new SystemException("É necessário informar a saida."));
+                .orElseThrow(() -> new SystemException(OUTPUT_REQUIRED));
 
         markedTimeService.insert(new MarkedTimeDTO(null, input, output));
 
-        final RequestDispatcher requestDispatcher = request.getRequestDispatcher("markedTime.jsp");
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher(pageName);
 
         this.setAttribute(request);
 
@@ -69,23 +70,23 @@ public class MarkedTimeController extends HttpServlet {
     }
 
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws SystemException {
-        final String input = Optional.ofNullable(request.getParameter("input"))
+        final String input = Optional.ofNullable(request.getParameter(INPUT.getName()))
                 .filter(StringUtils::isNoneBlank)
-                .orElseThrow(() -> new SystemException("o param 'entrada' é necessário."));
+                .orElseThrow(() -> new SystemException(INPUT_REQUIRED));
 
-        final String output = Optional.ofNullable(request.getParameter("output"))
+        final String output = Optional.ofNullable(request.getParameter(OUTPUT.getName()))
                 .filter(StringUtils::isNoneBlank)
-                .orElseThrow(() -> new SystemException("o param 'saída' é necessário."));
+                .orElseThrow(() -> new SystemException(OUTPUT_REQUIRED));
 
-        final String id = Optional.ofNullable(request.getParameter("id"))
+        final String id = Optional.ofNullable(request.getParameter(ID.getName()))
                 .filter(StringUtils::isNoneBlank)
-                .orElseThrow(() -> new SystemException("o param 'id' é necessário"));
+                .orElseThrow(() -> new SystemException(ID_REQUIRED));
 
         this.markedTimeService.update(new MarkedTimeDTO(Long.parseLong(id), input, output));
     }
 
-    private void processRequestByParam(HttpServletRequest request, String param, String id) {
-        switch (Param.valueOfBy(param)) {
+    private void processRequestByParam(HttpServletRequest request, String content, String id) {
+        switch (ParamContent.valueOfBy(content)) {
             case LIST:
                 this.list(request);
                 break;
@@ -99,7 +100,7 @@ public class MarkedTimeController extends HttpServlet {
                 this.findById(request, id);
                 break;
             default:
-                throw new SystemException(String.format("param '%s' não foi mapeado", param));
+                throw new IllegalArgumentException(String.format("ParamContent '%s' não foi mapeado", content));
         }
     }
 
@@ -114,7 +115,7 @@ public class MarkedTimeController extends HttpServlet {
 
     private void delete(HttpServletRequest request, String id) {
         if (StringUtils.isBlank(id)) {
-            throw new RuntimeException("o param 'id' é necessário");
+            throw new SystemException(ID_REQUIRED);
         }
 
         this.markedTimeService.delete(id);
@@ -123,14 +124,14 @@ public class MarkedTimeController extends HttpServlet {
 
     private void findById(HttpServletRequest request, String id) {
         if (StringUtils.isBlank(id)) {
-            throw new RuntimeException("o param 'id' é necessário");
+            throw new SystemException(ID_REQUIRED);
         }
 
         final MarkedTimeDTO markedTimeDTO = this.markedTimeService.findById(Long.parseLong(id));
-        request.setAttribute("markedTimeDTO", markedTimeDTO);
+        request.setAttribute(MarkedTimeDTO.name, markedTimeDTO);
     }
 
     private void setAttribute(HttpServletRequest request) {
-        request.setAttribute("markedTimesDTO", this.markedTimeService.listAll());
+        request.setAttribute(MarkedTimeDTO.listName, this.markedTimeService.listAll());
     }
 }
