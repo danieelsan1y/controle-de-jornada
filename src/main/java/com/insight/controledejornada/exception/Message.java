@@ -10,7 +10,7 @@ public enum Message {
     OUTPUT_REQUIRED("clientError: ", "É necessário informar a saída."),
     ID_REQUIRED("clientError: ", "É necessário informar o id."),
     WRONG_HOUR_AND_MINUTE("clientError: ", "Formato de hora e minuto incorreto."),
-    THREE_WORK_TIME("clientError :", "É Possível cadastrar apenas 3 Horários de trabalho."),
+    THREE_WORK_TIME("clientError: ", "É Possível cadastrar apenas 3 Horários de trabalho."),
     INCORRECT_HOUT_AND_MINUTE_FORMAT("clientError: ", "Formato de hora e minuto incorreto"),
     UNABLE_TO_UPDATE("error: ", "Não foi possível atualizar."),
     MARKED_TIME_NOT_FOUND("error: ", "o Objeto 'markedTime' não foi encontrado."),

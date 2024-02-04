@@ -38,10 +38,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .then(errorMessage => {
-                console.log(errorMessage)
-                const match = errorMessage.match(/error:(.*?)\./);
+                const match = errorMessage.match(/clientError:(.*?)\./);
                 const errorMessageText = match ? match[1].trim() : 'Ocorreu um erro inesperado';
 
+                console.log(errorMessage)
                 alert(errorMessageText);
             })
             .catch(error => {
