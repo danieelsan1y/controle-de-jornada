@@ -7,7 +7,6 @@
 <%
     @SuppressWarnings("unchecked")
     final ArrayList<WorkTimeDTO> workTimesDTO = (ArrayList<WorkTimeDTO>) request.getAttribute(listName);
-    WorkTimeDTO workTimeDTO = null;
 %>
 <!DOCTYPE html>
 <html>
@@ -63,14 +62,15 @@
                             <td style="vertical-align: middle;"><%=workTimesDTO.get(i).getOutput()%>
                             </td>
                             <td style="vertical-align: middle;">
-                                <%
-                                    workTimeDTO = workTimesDTO.get(i);
-                                %>
                                 <a class="btn btn-danger"
                                    href="workTime?type=delete&id=<%= workTimesDTO.get(i).getId() %>">
                                     <i class="bi bi-dash-circle"></i>
                                 </a>
-                                <a id="openModalUpdateBtn" class="btn btn-primary" style="margin-right: 5px">
+                                <a class="btn btn-primary openModalUpdateBtn" style="margin-right: 5px"
+                                   data-rowid="<%= workTimesDTO.get(i).getId()%>"
+                                   data-rowinput="<%= workTimesDTO.get(i).getInput()%>"
+                                   data-rowoutput="<%= workTimesDTO.get(i).getOutput()%>"
+                                >
                                     <i class="bi bi-arrow-clockwise"></i>
                                 </a>
                             </td>
@@ -125,19 +125,16 @@
                     <div class="form-group">
                         <label for="input">Número:</label>
                         <input type="text" class="form-control" id="updateId" name="id" required readonly
-                               value="<%=Optional.ofNullable(workTimeDTO).map(WorkTimeDTO::getId).map(String::valueOf).orElse("")%>"
                         >
                     </div>
                     <div class="form-group">
                         <label for="input">Entrada:</label>
                         <input type="time" class="form-control" id="updateInput" name="input" required
-                               value="<%=Optional.ofNullable(workTimeDTO).map(WorkTimeDTO::getInput).orElse("")%>"
                         >
                     </div>
                     <div class="form-group">
                         <label for="input">Saída:</label>
-                        <input type="time" class="form-control" id="UpdateOutput" name="output" required
-                               value="<%=Optional.ofNullable(workTimeDTO).map(WorkTimeDTO::getOutput).orElse("")%>"
+                        <input type="time" class="form-control" id="updateOutput" name="output" required
                         >
                     </div>
                     <div class="d-flex" style="margin-top: 10px">

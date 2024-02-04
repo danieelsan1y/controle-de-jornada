@@ -1,13 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
          pageEncoding="utf-8" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.Optional" %>
-<%@ page import="com.insight.controledejornada.dto.MarkedTimeDTO" %>
 <%@ page import="static com.insight.controledejornada.dto.MarkedTimeDTO.listName" %>
+<%@ page import="com.insight.controledejornada.dto.MarkedTimeDTO" %>
 <%
     @SuppressWarnings("unchecked")
     final ArrayList<MarkedTimeDTO> markedTimesDTO = (ArrayList<MarkedTimeDTO>) request.getAttribute(listName);
-    MarkedTimeDTO markedTimeDTO = null;
 %>
 <!DOCTYPE html>
 <html>
@@ -23,7 +21,6 @@
     <title>Controle de Jornada</title>
     <script src="script.js"></script>
     <script src="markedTime.js"></script>
-    <link rel="stylesheet" href="markedTime.css">
     <link rel="stylesheet" href="general.css">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -32,7 +29,7 @@
 <div id="navbar-container"></div>
 <div class="container">
     <div id="init">
-        <h2>Marcações feitas</h2>
+        <h2>Horários de trabalho</h2>
         <div class="d-flex">
             <a id="openModalBtn" class="btn btn-success" style="margin-right: 5px"> + </a>
             <a href="markedTime?type=deleteAll" class="button-red"> Remover todos </a>
@@ -63,14 +60,15 @@
                             <td style="vertical-align: middle;"><%=markedTimesDTO.get(i).getOutput()%>
                             </td>
                             <td style="vertical-align: middle;">
-                                <%
-                                    markedTimeDTO = markedTimesDTO.get(i);
-                                %>
                                 <a class="btn btn-danger"
                                    href="markedTime?type=delete&id=<%= markedTimesDTO.get(i).getId() %>">
                                     <i class="bi bi-dash-circle"></i>
                                 </a>
-                                <a id="openModalUpdateBtn" class="btn btn-primary" style="margin-right: 5px">
+                                <a class="btn btn-primary openModalUpdateBtn" style="margin-right: 5px"
+                                   data-rowid="<%= markedTimesDTO.get(i).getId()%>"
+                                   data-rowinput="<%= markedTimesDTO.get(i).getInput()%>"
+                                   data-rowoutput="<%= markedTimesDTO.get(i).getOutput()%>"
+                                >
                                     <i class="bi bi-arrow-clockwise"></i>
                                 </a>
                             </td>
@@ -125,19 +123,16 @@
                     <div class="form-group">
                         <label for="input">Número:</label>
                         <input type="text" class="form-control" id="updateId" name="id" required readonly
-                               value="<%=Optional.ofNullable(markedTimeDTO).map(MarkedTimeDTO::getId).map(String::valueOf).orElse("")%>"
                         >
                     </div>
                     <div class="form-group">
                         <label for="input">Entrada:</label>
                         <input type="time" class="form-control" id="updateInput" name="input" required
-                               value="<%=Optional.ofNullable(markedTimeDTO).map(MarkedTimeDTO::getInput).orElse("")%>"
                         >
                     </div>
                     <div class="form-group">
                         <label for="input">Saída:</label>
-                        <input type="time" class="form-control" id="UpdateOutput" name="output" required
-                               value="<%=Optional.ofNullable(markedTimeDTO).map(MarkedTimeDTO::getOutput).orElse("")%>"
+                        <input type="time" class="form-control" id="updateOutput" name="output" required
                         >
                     </div>
                     <div class="d-flex" style="margin-top: 10px">
