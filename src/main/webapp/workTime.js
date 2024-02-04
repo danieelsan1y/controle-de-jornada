@@ -30,31 +30,23 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch('workTime?' + new URLSearchParams(new FormData(form)).toString(), {
             method: method
         })
-            .then(response => {
+            .then(async response => {
                 if (response.ok) {
                     alert("Sucesso!");
                     window.location.href = 'workTime?type=list';
                 } else {
-                    alert('Ocorreu um erro inesperado');
-                    console.error('Erro na requisição. Status:', response.status);
+                    return response.text();
                 }
             })
+            .then(errorMessage => {
+                console.log(errorMessage)
+                const match = errorMessage.match(/error:(.*?)\./);
+                const errorMessageText = match ? match[1].trim() : 'Ocorreu um erro inesperado';
+
+                alert(errorMessageText);
+            })
             .catch(error => {
-                alert('Ocorreu um erro inesperado: ' + error.message);
                 console.error('Erro na requisição:', error);
             });
     }
 });
-
-
-// $(document).ready(function () {
-//
-//     console.log("passsei")
-//     $('#modalUpdate').on('show.bs.modal', function (event) {
-//         // Aqui você pode preencher os campos do formulário com os dados do workTimeDTO
-//         var workTimeDTO = new Gson().toJson(request.getAttribute("workTimeDTO"));
-//
-//         $('#updateInput').val(workTimeDTO.input);
-//         $('#UpdateOutput').val(workTimeDTO.output);
-//     });
-// });

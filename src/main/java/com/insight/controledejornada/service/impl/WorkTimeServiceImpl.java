@@ -1,6 +1,7 @@
 package com.insight.controledejornada.service.impl;
 
 import com.insight.controledejornada.dto.WorkTimeDTO;
+import com.insight.controledejornada.exception.Message;
 import com.insight.controledejornada.exception.SystemException;
 import com.insight.controledejornada.model.WorkTime;
 import com.insight.controledejornada.repositories.WorkTimeRepository;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.insight.controledejornada.exception.Message.*;
+
 @RequiredArgsConstructor
 public class WorkTimeServiceImpl implements WorkTimeService {
 
@@ -23,7 +26,7 @@ public class WorkTimeServiceImpl implements WorkTimeService {
         final WorkTime workTime = this.convertTo(dto);
 
         if (this.workTimeRepository.getNextId() > 3) {
-            throw new SystemException("É Possível cadastrar apenas 3 Horários de trabalho");
+            throw new SystemException(THREE_WORK_TIME);
         }
 
         this.workTimeRepository.insert(workTime);
@@ -37,7 +40,7 @@ public class WorkTimeServiceImpl implements WorkTimeService {
         return Optional.ofNullable(this.workTimeRepository.findById(workTime.getId()))
                 .map(it -> this.workTimeRepository.update(workTime))
                 .map(it -> new WorkTimeDTO(it.getId(), it.getInput().toString(), it.getOutput().toString()))
-                .orElseThrow(() -> new SystemException("Não foi possível atualizar"));
+                .orElseThrow(() -> new SystemException(UNABLE_TO_UPDATE));
     }
 
     @Override
@@ -45,7 +48,7 @@ public class WorkTimeServiceImpl implements WorkTimeService {
         long idFormatted = Optional.ofNullable(id)
                 .filter(StringUtils::isNotBlank)
                 .map(Long::parseLong)
-                .orElseThrow(() -> new SystemException("id é requerido para remoção."));
+                .orElseThrow(() -> new SystemException(ID_REQUIRED));
 
         this.workTimeRepository.delete(idFormatted);
     }
@@ -58,12 +61,12 @@ public class WorkTimeServiceImpl implements WorkTimeService {
     @Override
     public WorkTimeDTO findById(Long id) {
         if (id == null || id <= 0) {
-            throw new SystemException("id é requerido");
+            throw new SystemException(ID_REQUIRED);
         }
 
         return this.workTimeRepository.findById(id)
                 .map(it -> new WorkTimeDTO(it.getId(), it.getInput().toString(), it.getOutput().toString()))
-                .orElseThrow(() -> new SystemException("o Objeto 'workTime' não foi encontrado"));
+                .orElseThrow(() -> new SystemException(WORKTIME_TIME_NOT_FOUND));
     }
 
     @Override
@@ -76,7 +79,7 @@ public class WorkTimeServiceImpl implements WorkTimeService {
 
     private void validate(WorkTimeDTO dto) {
         if (dto == null) {
-            throw new SystemException("O Objeto 'workTime' não pode ser nulo");
+            throw new SystemException(MARKED_TIME_NOT_NULL);
         }
     }
 

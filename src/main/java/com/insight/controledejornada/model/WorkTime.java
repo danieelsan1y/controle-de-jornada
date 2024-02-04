@@ -14,6 +14,8 @@ import static com.insight.controledejornada.utils.HourUtils.getLocalTime;
 @ToString
 public class WorkTime extends Time implements Comparable<WorkTime> {
 
+    public final static String pageName = "workTime.jsp";
+
     public WorkTime(Long id, LocalTime input, LocalTime output) {
         super(id, input, output);
     }

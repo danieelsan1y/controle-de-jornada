@@ -7,6 +7,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WorkTimeDTO {
 
+    public static String name = "workTimeDTO";
+
+    public static String listName = "workTimesDTO";
+
     private final Long id;
 
     private final String input;
