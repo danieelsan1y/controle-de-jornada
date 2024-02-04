@@ -9,8 +9,12 @@ function loadPage(page) {
     });
 }
 
+function closeModal(page) {
+    window.location.href = page;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
-    var navbarContainer = document.getElementById("navbar-container");
+    const navbarContainer = document.getElementById("navbar-container");
 
     if (navbarContainer) {
         fetch("nav.html")

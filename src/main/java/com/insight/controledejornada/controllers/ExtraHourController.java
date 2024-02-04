@@ -36,18 +36,7 @@ public class ExtraHourController extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws SystemException, ServletException, IOException {
-
-        if (teste == 0) {
-            WorkTimeService workTimeService = new WorkTimeServiceImpl(new WorkTimeRepositoryImpl());
-            MarkedTimeService markedTimeService = new MarkedTimeServiceImpl(new MakedTimeRepositoryImpl());
-
-            workTimeService.insert(new WorkTimeDTO(1L, "08:00", "12:00"));
-            markedTimeService.insert(new MarkedTimeDTO(1L, "07:00", "11:00"));
-            teste = 1;
-        }
-
         final RequestDispatcher requestDispatcher = request.getRequestDispatcher("extraHour.jsp");
-
 
         request.setAttribute("extraHoursDTO", this.extraHourService.getExtraHours());
         requestDispatcher.forward(request, response);

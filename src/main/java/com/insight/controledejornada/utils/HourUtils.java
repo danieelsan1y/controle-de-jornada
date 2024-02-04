@@ -19,11 +19,9 @@ public class HourUtils {
 
         final String[] hourAndMinute = content.split(":");
 
-
         if (hourAndMinute.length != 2) {
             throw new SystemException(message);
         }
-
 
         final String hour = hourAndMinute[0];
         final String minute = hourAndMinute[1];
@@ -31,12 +29,11 @@ public class HourUtils {
         validate(hour);
         validate(minute);
 
-
         return LocalTime.of(parseInt(hour), parseInt(minute));
     }
 
     private static void validate(String content) {
-        if(!content.matches("[0-9]+") || content.length() != 2){
+        if (!content.matches("[0-9]+") || content.length() != 2) {
             throw new SystemException(message);
         }
         final int number = Integer.parseInt(content);

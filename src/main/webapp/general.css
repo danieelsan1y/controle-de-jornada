@@ -1,5 +1,5 @@
 .buton-blue {
-    padding: 6px 10px;
+    padding: 8px 10px;
     background-color: darkblue;
     color: white;
     text-decoration: none;
@@ -7,7 +7,7 @@
 }
 
 .button-red {
-    padding: 6px 10px;
+    padding: 8px 10px;
     background-color: red;
     color: white;
     text-decoration: none;

@@ -29,9 +29,11 @@ public class WorkTimeController extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws SystemException, ServletException, IOException {
-        final String param = Optional.ofNullable(request.getParameter("type"))
-                .filter(StringUtils::isNoneBlank)
-                .orElseThrow(() -> new SystemException("É necessário informar o tipo."));
+        String param = "list";
+
+        if (StringUtils.isNotBlank(request.getParameter("type"))) {
+            param = request.getParameter("type");
+        }
 
         final String id = request.getParameter("id");
 
@@ -39,10 +41,12 @@ public class WorkTimeController extends HttpServlet {
 
         this.processRequestByParam(request, param, id);
 
+        this.setAttribute(request);
+
         requestDispatcher.forward(request, response);
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws SystemException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws SystemException, ServletException, IOException {
         final String input = Optional.ofNullable(request.getParameter("input"))
                 .filter(StringUtils::isNoneBlank)
                 .orElseThrow(() -> new SystemException("É necessário informar a entrada."));
@@ -52,10 +56,28 @@ public class WorkTimeController extends HttpServlet {
                 .orElseThrow(() -> new SystemException("É necessário informar a saida."));
 
         workTimeService.insert(new WorkTimeDTO(null, input, output));
+
+        final RequestDispatcher requestDispatcher = request.getRequestDispatcher("workTime.jsp");
+
+        this.setAttribute(request);
+
+        requestDispatcher.forward(request, response);
     }
 
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws SystemException {
+        final String input = Optional.ofNullable(request.getParameter("input"))
+                .filter(StringUtils::isNoneBlank)
+                .orElseThrow(() -> new SystemException("o param 'entrada' é necessário."));
 
+        final String output = Optional.ofNullable(request.getParameter("output"))
+                .filter(StringUtils::isNoneBlank)
+                .orElseThrow(() -> new SystemException("o param 'saída' é necessário."));
+
+        final String id = Optional.ofNullable(request.getParameter("id"))
+                .filter(StringUtils::isNoneBlank)
+                .orElseThrow(() -> new SystemException("o param 'id' é necessário"));
+
+        this.workTimeService.update(new WorkTimeDTO(Long.parseLong(id), input, output));
     }
 
     public void destroy() {
@@ -71,6 +93,9 @@ public class WorkTimeController extends HttpServlet {
                 break;
             case DELETE_ALL:
                 this.deleteAll(request);
+                break;
+            case FIND_BY_ID:
+                this.findById(request, id);
                 break;
             default:
                 throw new SystemException(String.format("param '%s' não foi mapeado", param));
@@ -93,6 +118,15 @@ public class WorkTimeController extends HttpServlet {
 
         this.workTimeService.delete(id);
         this.setAttribute(request);
+    }
+
+    private void findById(HttpServletRequest request, String id) {
+        if (StringUtils.isBlank(id)) {
+            throw new RuntimeException("o param 'id' é necessário");
+        }
+
+        final WorkTimeDTO workTimeDTO = this.workTimeService.findById(Long.parseLong(id));
+        request.setAttribute("workTimeDTO", workTimeDTO);
     }
 
     private void setAttribute(HttpServletRequest request) {

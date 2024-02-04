@@ -19,5 +19,4 @@ public interface WorkTimeService {
     WorkTimeDTO findById(Long id);
 
     List<WorkTimeDTO> listAll();
-
 }

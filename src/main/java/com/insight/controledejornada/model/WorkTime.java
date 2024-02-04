@@ -12,7 +12,7 @@ import static com.insight.controledejornada.utils.HourUtils.getLocalTime;
 @Getter
 @Setter
 @ToString
-public class WorkTime extends Time {
+public class WorkTime extends Time implements Comparable<WorkTime> {
 
     public WorkTime(Long id, LocalTime input, LocalTime output) {
         super(id, input, output);
@@ -30,4 +30,8 @@ public class WorkTime extends Time {
         return this.getInput().isAfter(this.getOutput());
     }
 
+    @Override
+    public int compareTo(WorkTime o) {
+        return o.getInput().compareTo(this.getInput());
+    }
 }

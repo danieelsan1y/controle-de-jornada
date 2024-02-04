@@ -14,16 +14,15 @@ public enum Param {
     UPDATE("update"),
     DELETE("delete"),
     DELETE_ALL("deleteAll"),
-    LIST("list");
+    LIST("list"),
+    FIND_BY_ID("findById");
 
     private final String name;
-
 
     public static Param valueOfBy(String name) {
         return Arrays.stream(Param.values())
                 .filter(it -> it.getName().equals(name))
                 .findFirst()
-                .orElseThrow(() -> new SystemException(String.format("param '%s' não foi mapeado",name)));
+                .orElseThrow(() -> new SystemException(String.format("param '%s' não foi mapeado", name)));
     }
-
 }

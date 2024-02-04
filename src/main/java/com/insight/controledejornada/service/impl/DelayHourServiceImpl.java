@@ -24,7 +24,7 @@ public class DelayHourServiceImpl implements DelayHourService {
         final List<MarkedTime> markedTimes = markedTimeRepository.listAll();
         final List<DelayHourDTO> delayHourDTOS = new ArrayList<>(0);
 
-        if(workTimes.isEmpty() || markedTimes.isEmpty()) {
+        if (workTimes.isEmpty() || markedTimes.isEmpty()) {
             return new ArrayList<>(0);
         }
 

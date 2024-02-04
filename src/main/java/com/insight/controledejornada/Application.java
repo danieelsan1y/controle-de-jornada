@@ -8,13 +8,5 @@ import java.time.LocalTime;
 
 public class Application {
     public static void main(String[] args) {
-        WorkTimeRepository workTimeRepository = new WorkTimeRepositoryImpl();
-
-        WorkTime workTime = new WorkTime(LocalTime.now(),LocalTime.now());
-
-        workTimeRepository.insert(workTime);
-        workTimeRepository.insert(new WorkTime(LocalTime.now(), LocalTime.now()));
-
-        System.out.println(workTimeRepository.findById(workTime.getId()).get().getInput());
     }
 }
