@@ -16,7 +16,8 @@ public enum Message {
     MARKED_TIME_NOT_FOUND("error: ", "o Objeto 'markedTime' não foi encontrado."),
     MARKED_TIME_NOT_NULL("error: ", "O Objeto 'markedTime' não pode ser nulo."),
     WORKTIME_TIME_NOT_FOUND("error: ", "o Objeto 'workTime' não foi encontrado."),
-    WORKTIME_TIME_NOT_NULL("error: ", "O Objeto 'workTime' não pode ser nulo.");
+    WORKTIME_TIME_NOT_NULL("error: ", "O Objeto 'workTime' não pode ser nulo."),
+    TYPE_REQUIRED("error: ", "É necessário informar o type.");
 
     private final String type;
 

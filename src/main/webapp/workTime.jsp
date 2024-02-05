@@ -1,8 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
+<%@ page contentType="text/html; charset=utf-8"
          pageEncoding="utf-8" %>
 <%@ page import="com.insight.controledejornada.dto.WorkTimeDTO" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="java.util.Optional" %>
 <%@ page import="static com.insight.controledejornada.dto.WorkTimeDTO.listName" %>
 <%
     @SuppressWarnings("unchecked")
@@ -34,7 +33,7 @@
         <h2>Horários de trabalho</h2>
         <div class="d-flex">
             <a id="openModalBtn" class="btn btn-success" style="margin-right: 5px"> + </a>
-            <a href="workTime?type=deleteAll" class="button-red"> Remover todos </a>
+            <a class="button-red deleteAllButton" href="#"> Remover todos </a>
         </div>
     </div>
     <div class="container">
@@ -62,8 +61,8 @@
                             <td style="vertical-align: middle;"><%=workTimesDTO.get(i).getOutput()%>
                             </td>
                             <td style="vertical-align: middle;">
-                                <a class="btn btn-danger"
-                                   href="workTime?type=delete&id=<%= workTimesDTO.get(i).getId() %>">
+                                <a class="btn btn-danger deleteButton"
+                                   data-rowdeleteid="<%= workTimesDTO.get(i).getId()%>">
                                     <i class="bi bi-dash-circle"></i>
                                 </a>
                                 <a class="btn btn-primary openModalUpdateBtn" style="margin-right: 5px"

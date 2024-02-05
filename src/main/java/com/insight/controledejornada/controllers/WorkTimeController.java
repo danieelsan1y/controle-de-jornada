@@ -85,16 +85,26 @@ public class WorkTimeController extends HttpServlet {
         this.workTimeService.update(new WorkTimeDTO(Long.parseLong(id), input, output));
     }
 
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws SystemException {
+        final String type = Optional.ofNullable(request.getParameter(TYPE.getName()))
+                .orElseThrow(() -> new SystemException(TYPE_REQUIRED));
+
+        switch (ParamContent.valueOfBy(type)) {
+            case DELETE_ALL:
+                this.workTimeService.deleteAll();
+                break;
+            case DELETE:
+                this.delete(request);
+                break;
+            default:
+                throw new IllegalArgumentException(String.format("ParamContent '%s' não foi mapeado", type));
+        }
+    }
+
     private void processRequestByParam(HttpServletRequest request, String content, String id) {
         switch (ParamContent.valueOfBy(content)) {
             case LIST:
                 this.list(request);
-                break;
-            case DELETE:
-                this.delete(request, id);
-                break;
-            case DELETE_ALL:
-                this.deleteAll(request);
                 break;
             case FIND_BY_ID:
                 this.findById(request, id);
@@ -108,15 +118,10 @@ public class WorkTimeController extends HttpServlet {
         this.setAttribute(request);
     }
 
-    private void deleteAll(HttpServletRequest request) {
-        this.workTimeService.deleteAll();
-        this.setAttribute(request);
-    }
-
-    private void delete(HttpServletRequest request, String id) {
-        if (StringUtils.isBlank(id)) {
-            throw new SystemException(ID_REQUIRED);
-        }
+    private void delete(HttpServletRequest request) {
+        final String id = Optional.ofNullable(request.getParameter(ID.getName()))
+                .filter(StringUtils::isNoneBlank)
+                .orElseThrow(() -> new SystemException(ID_REQUIRED));
 
         this.workTimeService.delete(id);
         this.setAttribute(request);
