@@ -29,7 +29,7 @@
 <div id="navbar-container"></div>
 <div class="container">
     <div id="init">
-        <h2>Horários de trabalho</h2>
+        <h2>Marcações feitas</h2>
         <div class="d-flex">
             <a id="openModalBtn" class="btn btn-success" style="margin-right: 5px"> + </a>
             <a class="button-red deleteAllButton" href="#"> Remover todos </a>
