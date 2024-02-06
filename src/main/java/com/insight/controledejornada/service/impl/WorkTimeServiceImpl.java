@@ -2,6 +2,7 @@ package com.insight.controledejornada.service.impl;
 
 import com.insight.controledejornada.dto.WorkTimeDTO;
 import com.insight.controledejornada.exception.SystemException;
+import com.insight.controledejornada.model.Time;
 import com.insight.controledejornada.model.WorkTime;
 import com.insight.controledejornada.repositories.WorkTimeRepository;
 import com.insight.controledejornada.service.WorkTimeService;
@@ -9,10 +10,12 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.insight.controledejornada.exception.Message.*;
+import static com.insight.controledejornada.utils.IntervalValidator.validateInterval;
 
 @RequiredArgsConstructor
 public class WorkTimeServiceImpl implements WorkTimeService {
@@ -22,6 +25,15 @@ public class WorkTimeServiceImpl implements WorkTimeService {
     @Override
     public void insert(WorkTimeDTO dto) {
         final WorkTime workTime = this.convertTo(dto);
+
+        validateInterval(
+                workTime,
+                workTimeRepository.listAll().stream()
+                        .filter(Objects::nonNull)
+                        .map(Time.class::cast)
+                        .collect(Collectors.toList()),
+                Optional.empty()
+        );
 
         if (this.workTimeRepository.getNextId() > 3) {
             throw new SystemException(THREE_WORK_TIME);
@@ -34,6 +46,16 @@ public class WorkTimeServiceImpl implements WorkTimeService {
     public WorkTimeDTO update(WorkTimeDTO dto) {
         this.validate(dto);
         final WorkTime workTime = this.convertTo(dto);
+
+        validateInterval(
+                workTime,
+                workTimeRepository.listAll()
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(Time.class::cast)
+                        .collect(Collectors.toList()),
+                Optional.of(workTime)
+        );
 
         return Optional.ofNullable(this.workTimeRepository.findById(workTime.getId()))
                 .map(it -> this.workTimeRepository.update(workTime))

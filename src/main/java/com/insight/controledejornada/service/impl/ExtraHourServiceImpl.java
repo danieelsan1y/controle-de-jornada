@@ -24,8 +24,14 @@ public class ExtraHourServiceImpl implements ExtraHourService {
     private final MarkedTimeRepository markedTimeRepository;
 
     public List<ExtraHourDTO> getExtraHours() {
-        final List<WorkTime> workTimes = this.workTimeRepository.listAll();
-        final List<MarkedTime> markedTimes = this.markedTimeRepository.listAll();
+        final List<WorkTime> workTimes = workTimeRepository.listAll()
+                .stream()
+                .sorted(Comparator.comparing(WorkTime::getInput))
+                .collect(Collectors.toList());
+        final List<MarkedTime> markedTimes = markedTimeRepository.listAll()
+                .stream()
+                .sorted(Comparator.comparing(MarkedTime::getInput))
+                .collect(Collectors.toList());
 
         if (workTimes.isEmpty() || markedTimes.isEmpty()) {
             return new ArrayList<>(0);

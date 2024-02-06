@@ -28,10 +28,6 @@ public class WorkTime extends Time implements Comparable<WorkTime> {
         super(dto.getId(), getLocalTime(dto.getInput()), getLocalTime(dto.getOutput()));
     }
 
-    public boolean spansToNextDay() {
-        return this.getInput().isAfter(this.getOutput());
-    }
-
     @Override
     public int compareTo(WorkTime o) {
         return o.getInput().compareTo(this.getInput());

@@ -3,16 +3,20 @@ package com.insight.controledejornada.service.impl;
 import com.insight.controledejornada.dto.MarkedTimeDTO;
 import com.insight.controledejornada.exception.SystemException;
 import com.insight.controledejornada.model.MarkedTime;
+import com.insight.controledejornada.model.Time;
 import com.insight.controledejornada.repositories.MarkedTimeRepository;
 import com.insight.controledejornada.service.MarkedTimeService;
+import com.insight.controledejornada.utils.IntervalValidator;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.insight.controledejornada.exception.Message.*;
+import static com.insight.controledejornada.utils.IntervalValidator.validateInterval;
 
 @RequiredArgsConstructor
 public class MarkedTimeServiceImpl implements MarkedTimeService {
@@ -22,6 +26,17 @@ public class MarkedTimeServiceImpl implements MarkedTimeService {
     @Override
     public void insert(MarkedTimeDTO dto) {
         final MarkedTime markedTime = this.convertTo(dto);
+
+        validateInterval(
+                markedTime,
+                this.markedTimeRepository.listAll()
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(Time.class::cast)
+                        .collect(Collectors.toList()),
+                Optional.empty()
+        );
+
         this.markedTimeRepository.insert(markedTime);
     }
 
@@ -29,6 +44,16 @@ public class MarkedTimeServiceImpl implements MarkedTimeService {
     public MarkedTimeDTO update(MarkedTimeDTO dto) {
         this.validate(dto);
         final MarkedTime markedTime = this.convertTo(dto);
+
+        validateInterval(
+                markedTime,
+                this.markedTimeRepository.listAll()
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(Time.class::cast)
+                        .collect(Collectors.toList()),
+                Optional.of(markedTime)
+        );
 
         return Optional.ofNullable(this.markedTimeRepository.findById(markedTime.getId()))
                 .map(it -> this.markedTimeRepository.update(markedTime))

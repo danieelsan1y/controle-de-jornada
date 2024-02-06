@@ -18,4 +18,9 @@ public abstract class Time {
     private LocalTime input;
 
     private LocalTime output;
+
+    public boolean spansToNextDay() {
+        return this.getInput().isAfter(this.getOutput());
+    }
+
 }

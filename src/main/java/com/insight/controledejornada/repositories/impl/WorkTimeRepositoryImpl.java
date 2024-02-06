@@ -41,10 +41,7 @@ public class WorkTimeRepositoryImpl extends GenericRepository<WorkTime> implemen
 
     @Override
     public List<WorkTime> listAll() {
-        return super.listAll(workTimes)
-                .stream()
-                .sorted(Comparator.comparing(WorkTime::getInput))
-                .collect(Collectors.toList());
+        return super.listAll(workTimes);
     }
 
     @Override

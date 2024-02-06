@@ -18,9 +18,6 @@ public class MarkedTime extends Time implements Comparable<MarkedTime> {
         super(id, input, output);
     }
 
-    public MarkedTime(LocalTime input, LocalTime output) {
-        super(null, input, output);
-    }
 
     public MarkedTime(MarkedTimeDTO dto) {
         super(dto.getId(), getLocalTime(dto.getInput()), getLocalTime(dto.getOutput()));
