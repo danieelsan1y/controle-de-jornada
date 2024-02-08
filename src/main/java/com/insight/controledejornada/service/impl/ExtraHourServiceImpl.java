@@ -24,14 +24,8 @@ public class ExtraHourServiceImpl implements ExtraHourService {
     private final MarkedTimeRepository markedTimeRepository;
 
     public List<ExtraHourDTO> getExtraHours() {
-        final List<WorkTime> workTimes = workTimeRepository.listAll()
-                .stream()
-                .sorted(Comparator.comparing(WorkTime::getInput))
-                .collect(Collectors.toList());
-        final List<MarkedTime> markedTimes = markedTimeRepository.listAll()
-                .stream()
-                .sorted(Comparator.comparing(MarkedTime::getInput))
-                .collect(Collectors.toList());
+        final List<WorkTime> workTimes = workTimeRepository.listAll();
+        final List<MarkedTime> markedTimes = markedTimeRepository.listAll();
 
         if (workTimes.isEmpty() || markedTimes.isEmpty()) {
             return new ArrayList<>(0);
@@ -84,8 +78,13 @@ public class ExtraHourServiceImpl implements ExtraHourService {
             MarkedTime markedTime
     ) {
         if (markedTime.getInput().isBefore(first.getInput())) {
-            if (first.spansToNextDay() && markedTime.getInput().isAfter(first.getOutput())) {
-                extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), first.getInput()));
+            if (first.spansToNextDay() && markedTime.spansToNextDay()) {
+                if (markedTime.getInput().isAfter(first.getOutput())) {
+                    extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), first.getInput()));
+                }
+                if (markedTime.getOutput().isAfter(first.getOutput())) {
+                    extraHourDTOS.add(new ExtraHourDTO(first.getOutput(), markedTime.getOutput()));
+                }
             } else if (!first.spansToNextDay()) {
                 extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), first.getInput()));
             }
