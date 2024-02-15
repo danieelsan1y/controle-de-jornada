@@ -1,8 +1,8 @@
 package com.insight.controledejornada.service.impl;
 
 import com.insight.controledejornada.dto.DelayHourDTO;
-import com.insight.controledejornada.model.Interval;
 import com.insight.controledejornada.model.MarkedTime;
+import com.insight.controledejornada.model.Time;
 import com.insight.controledejornada.model.WorkTime;
 import com.insight.controledejornada.repositories.MarkedTimeRepository;
 import com.insight.controledejornada.repositories.WorkTimeRepository;
@@ -11,11 +11,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -27,23 +24,14 @@ public class DelayHourServiceImpl implements DelayHourService {
 
     @Override
     public List<DelayHourDTO> getDelayHours() {
-        final List<WorkTime> workTimes = workTimeRepository.listAll()
-                .stream()
-                .sorted(Comparator.comparing(WorkTime::getInput))
-                .collect(Collectors.toList());
+        final List<WorkTime> workTimes = workTimeRepository.listAll();
 
-        final List<MarkedTime> markedTimes = markedTimeRepository.listAll()
-                .stream()
-                .sorted(Comparator.comparing(MarkedTime::getInput))
-                .collect(Collectors.toList());
+        final List<MarkedTime> markedTimes = markedTimeRepository.listAll();
 
         final List<DelayHourDTO> delayHourDTOS = new ArrayList<>(0);
-
         for (WorkTime workTime : workTimes) {
             if (workTime.spansToNextDay()) {
-                for (MarkedTime markedTime : markedTimes) {
-                    this.processSpansToNextDay(workTime, markedTime, delayHourDTOS);
-                }
+                this.processSpansToNextDay(workTime, markedTimes, delayHourDTOS);
             } else {
                 this.processNotSpansToNextDay(workTime, markedTimes, delayHourDTOS);
             }
@@ -57,34 +45,110 @@ public class DelayHourServiceImpl implements DelayHourService {
             List<MarkedTime> markedTimes,
             List<DelayHourDTO> delayHourDTOS
     ) {
-        final Optional<MarkedTime> markedTime = markedTimes.stream()
-                .filter(it -> !it.spansToNextDay())
-                .filter(it -> (workTime.getOutput().isAfter(it.getOutput()) || workTime.getOutput().equals(it.getOutput()))
-                        && workTime.getInput().isBefore(it.getOutput())
-                )
-                .findFirst();
+        final List<MarkedTime> markingsInThePeriod = this.getMarkingsInThePeriodNotSpansToNextDay(workTime, markedTimes);
 
-        if (markedTime.isPresent()) {
-            if ((markedTime.get().getInput().isAfter(workTime.getInput()))) {
-                delayHourDTOS.add(new DelayHourDTO(workTime.getInput(), markedTime.get().getInput()));
-            }
-            if (markedTime.get().getOutput().isBefore(workTime.getOutput())) {
-                delayHourDTOS.add(new DelayHourDTO(markedTime.get().getOutput(), workTime.getOutput()));
+        if (!markingsInThePeriod.isEmpty()) {
+            this.setMarkingsFoundNotSpansToNextDay(workTime, delayHourDTOS, markingsInThePeriod);
+        } else {
+            this.setMarkingsNotFoundNotSpansToNextDay(workTime, markedTimes, delayHourDTOS);
+        }
+    }
+
+    private List<MarkedTime> getMarkingsInThePeriodNotSpansToNextDay(
+            WorkTime workTime,
+            List<MarkedTime> markedTimes
+    ) {
+        final LocalTime workTimeInput = workTime.getInput();
+        final LocalTime workTimeOutput = workTime.getOutput();
+
+        return markedTimes.stream()
+                .filter(it -> !it.spansToNextDay())
+                .filter(it -> (
+                                workTimeOutput.compareTo(it.getOutput()) > -1
+                                        || (workTimeInput.isBefore(it.getInput()) && workTimeOutput.isAfter(it.getInput()))
+                        )
+                                && workTimeInput.isBefore(it.getOutput())
+                )
+                .collect(Collectors.toList());
+    }
+
+    private void setMarkingsFoundNotSpansToNextDay(
+            WorkTime workTime,
+            List<DelayHourDTO> delayHourDTOS,
+            List<MarkedTime> markedTeste
+    ) {
+        if (markedTeste.size() == 1) {
+            this.processInputAndOutputNotSpansToNextDay(workTime, delayHourDTOS, markedTeste.get(0), markedTeste.get(0));
+        } else {
+            this.processInputAndOutputNotSpansToNextDay(
+                    workTime, delayHourDTOS,
+                    markedTeste.get(0),
+                    markedTeste.get(markedTeste.size() - 1)
+            );
+
+            this.processIntervals(markedTeste, delayHourDTOS);
+        }
+    }
+
+    private void setMarkingsNotFoundNotSpansToNextDay(
+            WorkTime workTime,
+            List<MarkedTime> markedTimes,
+            List<DelayHourDTO> delayHourDTOS
+    ) {
+        final Optional<MarkedTime> equals = this.getEquals(workTime, markedTimes)
+                .filter(Time::notSpansToNextDay);
+
+        final Optional<MarkedTime> greater = getGreater(workTime, markedTimes)
+                .filter(Time::notSpansToNextDay);
+
+        if (equals.isEmpty() && greater.isEmpty()) {
+            delayHourDTOS.add(new DelayHourDTO(workTime.getInput(), workTime.getOutput()));
+        }
+    }
+
+    private void processInputAndOutputNotSpansToNextDay(
+            WorkTime workTime,
+            List<DelayHourDTO> delayHourDTOS,
+            MarkedTime first,
+            MarkedTime last
+    ) {
+        if (first.getInput().isAfter(workTime.getInput())) {
+            delayHourDTOS.add(new DelayHourDTO(workTime.getInput(), first.getInput()));
+        }
+        if (last.getOutput().isBefore(workTime.getOutput())) {
+            delayHourDTOS.add(new DelayHourDTO(last.getOutput(), workTime.getOutput()));
+        }
+    }
+
+    private void processSpansToNextDay(
+            WorkTime workTime,
+            List<MarkedTime> markedTimes,
+            List<DelayHourDTO> delayHourDTOS
+    ) {
+        final List<MarkedTime> sortedTimes = new ArrayList<>(markedTimes.size());
+        sortedTimes.addAll(markedTimes.stream().filter(Time::spansToNextDay).collect(Collectors.toList()));
+        sortedTimes.addAll(markedTimes.stream().filter(Time::notSpansToNextDay).collect(Collectors.toList()));
+
+        final List<MarkedTime> markingsInThePeriod = this.getMarkingsInThePeriod(sortedTimes, workTime);
+
+        if (!markingsInThePeriod.isEmpty()) {
+            if (markingsInThePeriod.size() == 1) {
+                MarkedTime first = markingsInThePeriod.get(0);
+                this.processInputAndOutputSpansToNextDay(delayHourDTOS, first, first, workTime);
+            } else {
+                this.processInputAndOutputSpansToNextDay(
+                        delayHourDTOS,
+                        markingsInThePeriod.get(0),
+                        markingsInThePeriod.get(markedTimes.size() - 1),
+                        workTime
+                );
+
+                this.processIntervals(markingsInThePeriod, delayHourDTOS);
             }
         } else {
-            final Optional<MarkedTime> equals = markedTimes.stream()
-                    .filter(it -> !it.spansToNextDay())
-                    .filter(it -> it.getInput().equals(workTime.getInput())
-                            && it.getOutput().equals(workTime.getOutput())
-                    )
-                    .findFirst();
+            final Optional<MarkedTime> equals = getEquals(workTime, sortedTimes);
 
-            final Optional<MarkedTime> greater = markedTimes.stream()
-                    .filter(it -> it.getInput().compareTo(workTime.getInput()) < 1
-                            && it.getOutput().compareTo(workTime.getOutput()) > -1
-                    )
-                    .filter(it -> !it.spansToNextDay())
-                    .findFirst();
+            final Optional<MarkedTime> greater = getGreater(workTime, sortedTimes);
 
             if (equals.isEmpty() && greater.isEmpty()) {
                 delayHourDTOS.add(new DelayHourDTO(workTime.getInput(), workTime.getOutput()));
@@ -92,46 +156,65 @@ public class DelayHourServiceImpl implements DelayHourService {
         }
     }
 
-    private void processSpansToNextDay(
-            WorkTime workTime,
-            MarkedTime markedTime,
-            List<DelayHourDTO> delayHourDTOS
+    private static Optional<MarkedTime> getGreater(WorkTime workTime, List<MarkedTime> sortedTimes) {
+        return sortedTimes.stream()
+                .filter(it -> it.getInput().compareTo(workTime.getInput()) < 1
+                        && it.getOutput().compareTo(workTime.getOutput()) > -1
+                )
+                .filter(it -> !it.spansToNextDay())
+                .findFirst();
+    }
+
+    private Optional<MarkedTime> getEquals(WorkTime workTime, List<MarkedTime> sortedTimes) {
+        return sortedTimes.stream()
+                .filter(it -> it.getInput().equals(workTime.getInput())
+                        && it.getOutput().equals(workTime.getOutput())
+                )
+                .findFirst();
+    }
+
+    private List<MarkedTime> getMarkingsInThePeriod(List<MarkedTime> sortedTimes, WorkTime workTime) {
+        final LocalTime workTimeOutput = workTime.getOutput();
+        final List<MarkedTime> markingsInThePeriod = new ArrayList<>(0);
+        sortedTimes.forEach(it -> {
+            if (it.spansToNextDay()) {
+                markingsInThePeriod.add(new MarkedTime(it.getId(), it.getInput(), it.getOutput()));
+            } else if (it.getInput().compareTo(workTimeOutput) < 1 || it.getOutput().compareTo(workTimeOutput) < 1) {
+                markingsInThePeriod.add(new MarkedTime(it.getId(), it.getInput(), it.getOutput()));
+            } else if (it.getOutput().equals(workTime.getInput())) {
+                markingsInThePeriod.add(new MarkedTime(it.getId(), it.getInput(), it.getOutput()));
+            }
+        });
+
+        return markingsInThePeriod;
+    }
+
+    private void processInputAndOutputSpansToNextDay(
+            List<DelayHourDTO> delayHourDTOS,
+            MarkedTime first,
+            MarkedTime last,
+            WorkTime workTime
     ) {
-        if (workTime.getInput().isAfter(markedTime.getOutput())
-                && workTime.getOutput().isBefore(markedTime.getInput())) {
-            this.setMarkedTimeAsEntryAndExitDelays(workTime, markedTime, delayHourDTOS);
+        final LocalTime workTimeInput = workTime.getInput();
+        final LocalTime workTimeOutput = workTime.getOutput();
+
+        if (first.getInput().isBefore(workTimeInput) && first.getInput().isBefore(workTimeOutput)) {
+            delayHourDTOS.add(new DelayHourDTO(workTimeInput, first.getInput()));
+        } else if (first.getInput().isAfter(workTimeInput)) {
+            delayHourDTOS.add(new DelayHourDTO(workTimeInput, first.getInput()));
         }
-        if (workTime.getInput().isAfter(markedTime.getOutput())
-                && workTime.getOutput().isAfter(markedTime.getInput())) {
-            this.processWorkTimeAsEntryAndExitDelays(workTime, markedTime, delayHourDTOS);
+        if (last.getOutput().isBefore(workTimeOutput) || (last.getOutput().isAfter(workTimeInput) && last.getOutput().isAfter(workTimeOutput))) {
+            delayHourDTOS.add(new DelayHourDTO(first.getOutput(), workTimeOutput));
         }
     }
 
-    private void setMarkedTimeAsEntryAndExitDelays(
-            WorkTime workTime,
-            MarkedTime markedTime,
+    private void processIntervals(
+            List<MarkedTime> markedTimes,
             List<DelayHourDTO> delayHourDTOS
     ) {
-        if (markedTime.getInput().isAfter(workTime.getInput())) {
-            delayHourDTOS.add(new DelayHourDTO(workTime.getInput(), markedTime.getInput()));
-        }
 
-        if (markedTime.getOutput().isBefore(workTime.getOutput())) {
-            delayHourDTOS.add(new DelayHourDTO(markedTime.getOutput(), workTime.getOutput()));
-        }
-    }
-
-    private void processWorkTimeAsEntryAndExitDelays(
-            WorkTime workTime,
-            MarkedTime markedTime,
-            List<DelayHourDTO> delayHourDTOS
-    ) {
-        if (workTime.getInput().isAfter(markedTime.getInput())) {
-            delayHourDTOS.add(new DelayHourDTO(workTime.getInput(), markedTime.getInput()));
-        }
-
-        if (workTime.getOutput().isBefore(workTime.getOutput())) {
-            delayHourDTOS.add(new DelayHourDTO(markedTime.getOutput(), workTime.getOutput()));
+        for (int i = 0; i < markedTimes.size() - 1; i++) {
+            delayHourDTOS.add(new DelayHourDTO(markedTimes.get(i).getOutput(), markedTimes.get(i + 1).getInput()));
         }
     }
 }

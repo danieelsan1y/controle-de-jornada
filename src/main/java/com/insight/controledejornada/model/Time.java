@@ -20,7 +20,10 @@ public abstract class Time {
     private LocalTime output;
 
     public boolean spansToNextDay() {
-        return this.getInput().isAfter(this.getOutput());
+        return this.getInput().isAfter(this.getOutput()) && this.getOutput().compareTo(LocalTime.of(0, 0)) > -1;
     }
 
+    public boolean notSpansToNextDay() {
+        return !spansToNextDay();
+    }
 }
