@@ -360,6 +360,31 @@ class DelayHourDTOServiceTest {
         Assertions.assertEquals(0, delayHourDTOS.size());
     }
 
+    @Test
+    public void test10() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
+                                new WorkTime(1L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(22, 0), LocalTime.of(5, 0))
+                        )
+                );
+
+        final List<DelayHourDTO> delayHourDTOS = this.delayHourService.getDelayHours();
+
+        Assertions.assertEquals(1, delayHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(5, 0), delayHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(6, 0), delayHourDTOS.get(0).getEnd());
+    }
+
     private List<WorkTime> getWorkScheduleExampleOneAndTwo() {
         return List.of(new WorkTime(1L, LocalTime.of(8, 0), LocalTime.of(12, 0)));
     }

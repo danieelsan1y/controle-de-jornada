@@ -42,10 +42,7 @@ public class MakedTimeRepositoryImpl extends GenericRepository<MarkedTime> imple
 
     @Override
     public List<MarkedTime> listAll() {
-        return super.listAll(markedTimes)
-                .stream()
-                .sorted(Comparator.comparing(MarkedTime::getInput))
-                .collect(Collectors.toList());
+        return super.listAll(markedTimes);
     }
 
     @Override

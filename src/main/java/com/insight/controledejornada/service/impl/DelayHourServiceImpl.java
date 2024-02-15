@@ -10,9 +10,7 @@ import com.insight.controledejornada.service.DelayHourService;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -30,14 +28,23 @@ public class DelayHourServiceImpl implements DelayHourService {
 
         final List<DelayHourDTO> delayHourDTOS = new ArrayList<>(0);
         for (WorkTime workTime : workTimes) {
-            if (workTime.spansToNextDay()) {
-                this.processSpansToNextDay(workTime, markedTimes, delayHourDTOS);
-            } else {
-                this.processNotSpansToNextDay(workTime, markedTimes, delayHourDTOS);
-            }
+            this.processSpansToNextDay(workTime, markedTimes, delayHourDTOS);
+            this.processNotSpansToNextDay(workTime, markedTimes, delayHourDTOS);
         }
 
         return delayHourDTOS;
+    }
+
+    private Optional<MarkedTime> getUnion(WorkTime workTime, List<MarkedTime> list) {
+        return list.stream()
+                .filter(Time::spansToNextDay)
+                .filter(it ->
+                        workTime.getInput().isBefore(it.getInput()) &&
+                                workTime.getOutput().isAfter(it.getOutput())
+                )
+                .collect(Collectors.toList())
+                .stream()
+                .findFirst();
     }
 
     private void processNotSpansToNextDay(
@@ -45,6 +52,10 @@ public class DelayHourServiceImpl implements DelayHourService {
             List<MarkedTime> markedTimes,
             List<DelayHourDTO> delayHourDTOS
     ) {
+        if (workTime.spansToNextDay()) {
+            return;
+        }
+
         final List<MarkedTime> markingsInThePeriod = this.getMarkingsInThePeriodNotSpansToNextDay(workTime, markedTimes);
 
         if (!markingsInThePeriod.isEmpty()) {
@@ -98,11 +109,26 @@ public class DelayHourServiceImpl implements DelayHourService {
         final Optional<MarkedTime> equals = this.getEquals(workTime, markedTimes)
                 .filter(Time::notSpansToNextDay);
 
-        final Optional<MarkedTime> greater = getGreater(workTime, markedTimes)
+        final Optional<MarkedTime> greater = this.getGreater(workTime, markedTimes)
                 .filter(Time::notSpansToNextDay);
 
-        if (equals.isEmpty() && greater.isEmpty()) {
+        final Optional<MarkedTime> union = this.getUnion(workTime, markedTimes);
+        boolean isWorkingHours = true;
+
+        if (union.isPresent()) {
+            isWorkingHours = workTimeRepository.listAll()
+                    .stream()
+                    .anyMatch(it ->
+                            it.getInput().equals(union.get().getInput()) &&
+                                    it.getOutput().equals(union.get().getOutput())
+                    );
+        }
+
+        if (equals.isEmpty() && greater.isEmpty() && isWorkingHours) {
             delayHourDTOS.add(new DelayHourDTO(workTime.getInput(), workTime.getOutput()));
+        }
+        if (!isWorkingHours) {
+            delayHourDTOS.add(new DelayHourDTO(union.get().getOutput(), workTime.getOutput()));
         }
     }
 
@@ -125,6 +151,10 @@ public class DelayHourServiceImpl implements DelayHourService {
             List<MarkedTime> markedTimes,
             List<DelayHourDTO> delayHourDTOS
     ) {
+        if (workTime.notSpansToNextDay()) {
+            return;
+        }
+
         final List<MarkedTime> sortedTimes = new ArrayList<>(markedTimes.size());
         sortedTimes.addAll(markedTimes.stream().filter(Time::spansToNextDay).collect(Collectors.toList()));
         sortedTimes.addAll(markedTimes.stream().filter(Time::notSpansToNextDay).collect(Collectors.toList()));
@@ -156,7 +186,7 @@ public class DelayHourServiceImpl implements DelayHourService {
         }
     }
 
-    private static Optional<MarkedTime> getGreater(WorkTime workTime, List<MarkedTime> sortedTimes) {
+    private Optional<MarkedTime> getGreater(WorkTime workTime, List<MarkedTime> sortedTimes) {
         return sortedTimes.stream()
                 .filter(it -> it.getInput().compareTo(workTime.getInput()) < 1
                         && it.getOutput().compareTo(workTime.getOutput()) > -1
