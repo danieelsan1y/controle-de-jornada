@@ -11,10 +11,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class ExtraHourServiceImpl implements ExtraHourService {
@@ -39,9 +37,7 @@ public class ExtraHourServiceImpl implements ExtraHourService {
 
         this.setExtraHours(markedTimes, first, extraHourDTOS, intervals, last);
 
-        return extraHourDTOS.stream()
-                .sorted(Comparator.comparing(ExtraHourDTO::getStart))
-                .collect(Collectors.toList());
+        return extraHourDTOS;
     }
 
     private void setExtraHours(
@@ -54,11 +50,15 @@ public class ExtraHourServiceImpl implements ExtraHourService {
         markedTimes.stream()
                 .filter(Objects::nonNull)
                 .forEach(it -> {
-                    this.setOvertimeBeforeWork(first, extraHourDTOS, it);
+                    if (first.notSpansToNextDay() && it.notSpansToNextDay()) {
+                        this.setOvertimeBeforeWork(first, extraHourDTOS, it);
 
-                    this.setOvertimeDuringTheBreak(it, intervals, extraHourDTOS);
+                        this.setOvertimeDuringTheBreak(it, intervals, extraHourDTOS);
 
-                    this.setOvertimeAfterWork(extraHourDTOS, last, it);
+                        this.setOvertimeAfterWork(extraHourDTOS, last, it);
+                    } else {
+                        this.setOvertimeBeforeWorkA(first, last, extraHourDTOS, it);
+                    }
                 });
     }
 
@@ -78,15 +78,36 @@ public class ExtraHourServiceImpl implements ExtraHourService {
             MarkedTime markedTime
     ) {
         if (markedTime.getInput().isBefore(first.getInput())) {
-            if (first.spansToNextDay() && markedTime.spansToNextDay()) {
-                if (markedTime.getInput().isAfter(first.getOutput())) {
+            if (markedTime.getOutput().isBefore(first.getInput())) {
+                extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), markedTime.getOutput()));
+            } else {
+                extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), first.getInput()));
+            }
+        }
+    }
+
+    private void setOvertimeBeforeWorkA(
+            WorkTime first,
+            WorkTime last,
+            List<ExtraHourDTO> extraHourDTOS,
+            MarkedTime markedTime
+    ) {
+        if (markedTime.getOutput().compareTo(first.getInput()) < 1
+                && markedTime.getOutput().isAfter(first.getOutput())
+                && markedTime.getInput().compareTo(last.getOutput()) > -1
+                && first.getId().equals(last.getId())
+        ) {
+            extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), markedTime.getOutput()));
+        } else {
+            if (markedTime.getInput().isBefore(first.getInput()) && markedTime.getInput().isAfter(first.getOutput())) {
+                if (markedTime.getOutput().isBefore(first.getOutput())) {
                     extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), first.getInput()));
                 }
-                if (markedTime.getOutput().isAfter(first.getOutput())) {
-                    extraHourDTOS.add(new ExtraHourDTO(first.getOutput(), markedTime.getOutput()));
-                }
-            } else if (!first.spansToNextDay()) {
-                extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), first.getInput()));
+            }
+            if (markedTime.getInput().isBefore(last.getOutput()) && markedTime.getOutput().isAfter(last.getOutput())) {
+                extraHourDTOS.add(new ExtraHourDTO(last.getOutput(), markedTime.getOutput()));
+            } else if (markedTime.getInput().compareTo(last.getOutput()) > -1 && markedTime.getOutput().isAfter(last.getOutput())) {
+                extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), markedTime.getOutput()));
             }
         }
     }
@@ -96,8 +117,12 @@ public class ExtraHourServiceImpl implements ExtraHourService {
             WorkTime last,
             MarkedTime markedTime
     ) {
-        if (last != null && markedTime.getOutput().isAfter(last.getOutput())) {
-            extraHourDTOS.add(new ExtraHourDTO(last.getOutput(), markedTime.getOutput()));
+        if (last != null) {
+            if (markedTime.getOutput().isAfter(last.getOutput()) && markedTime.getInput().isAfter(last.getOutput())) {
+                extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), markedTime.getOutput()));
+            } else if (markedTime.getOutput().isAfter(last.getOutput())) {
+                extraHourDTOS.add(new ExtraHourDTO(last.getOutput(), markedTime.getOutput()));
+            }
         }
     }
 

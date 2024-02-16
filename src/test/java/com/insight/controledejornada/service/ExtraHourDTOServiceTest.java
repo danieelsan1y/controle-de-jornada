@@ -91,6 +91,331 @@ class ExtraHourDTOServiceTest {
     }
 
     @Test
+    public void test1() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(8, 0), LocalTime.of(12, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(8, 0), LocalTime.of(9, 30)),
+                                new MarkedTime(2L, LocalTime.of(10, 30), LocalTime.of(12, 0))
+                        )
+                );
+
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
+
+        Assertions.assertEquals(0, extraHourDTOS.size());
+    }
+
+    @Test
+    public void test2() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(8, 0), LocalTime.of(12, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(6, 0), LocalTime.of(7, 30)),
+                                new MarkedTime(2L, LocalTime.of(8, 15), LocalTime.of(10, 0)),
+                                new MarkedTime(3L, LocalTime.of(10, 10), LocalTime.of(11, 35)),
+                                new MarkedTime(4L, LocalTime.of(11, 50), LocalTime.of(12, 45))
+                        )
+                );
+
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
+
+        Assertions.assertEquals(2, extraHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(6, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(7, 30), extraHourDTOS.get(0).getEnd());
+
+        Assertions.assertEquals(LocalTime.of(12, 0), extraHourDTOS.get(1).getStart());
+        Assertions.assertEquals(LocalTime.of(12, 45), extraHourDTOS.get(1).getEnd());
+    }
+
+    @Test
+    public void test3() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(8, 0), LocalTime.of(12, 0)),
+                                new WorkTime(1L, LocalTime.of(14, 0), LocalTime.of(18, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(9, 0), LocalTime.of(13, 0)),
+                                new MarkedTime(2L, LocalTime.of(15, 0), LocalTime.of(19, 0))
+                        )
+                );
+
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
+
+        Assertions.assertEquals(2, extraHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(12, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(13, 0), extraHourDTOS.get(0).getEnd());
+
+        Assertions.assertEquals(LocalTime.of(18, 0), extraHourDTOS.get(1).getStart());
+        Assertions.assertEquals(LocalTime.of(19, 0), extraHourDTOS.get(1).getEnd());
+    }
+
+    @Test
+    public void test4() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(8, 0), LocalTime.of(12, 0)),
+                                new WorkTime(1L, LocalTime.of(14, 0), LocalTime.of(18, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(8, 0), LocalTime.of(12, 0)),
+                                new MarkedTime(2L, LocalTime.of(19, 0), LocalTime.of(21, 0))
+                        )
+                );
+
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
+
+        Assertions.assertEquals(1, extraHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(19, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(21, 0), extraHourDTOS.get(0).getEnd());
+    }
+
+    @Test
+    public void test5() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(8, 0), LocalTime.of(12, 0)),
+                                new WorkTime(1L, LocalTime.of(14, 0), LocalTime.of(18, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(8, 0), LocalTime.of(11, 0)),
+                                new MarkedTime(2L, LocalTime.of(12, 0), LocalTime.of(16, 0)),
+                                new MarkedTime(3L, LocalTime.of(17, 0), LocalTime.of(21, 0))
+                        )
+                );
+
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
+
+        Assertions.assertEquals(2, extraHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(12, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(14, 0), extraHourDTOS.get(0).getEnd());
+
+        Assertions.assertEquals(LocalTime.of(18, 0), extraHourDTOS.get(1).getStart());
+        Assertions.assertEquals(LocalTime.of(21, 0), extraHourDTOS.get(1).getEnd());
+    }
+
+    @Test
+    public void test6() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(6, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
+                                new MarkedTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                        )
+                );
+
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
+
+        Assertions.assertEquals(0, extraHourDTOS.size());
+    }
+
+    @Test
+    public void test7() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(6, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(20, 0), LocalTime.of(22, 0)),
+                                new MarkedTime(2L, LocalTime.of(6, 0), LocalTime.of(7, 0))
+                        )
+                );
+
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
+
+        Assertions.assertEquals(2, extraHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(20, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(22, 0), extraHourDTOS.get(0).getEnd());
+
+        Assertions.assertEquals(LocalTime.of(6, 0), extraHourDTOS.get(1).getStart());
+        Assertions.assertEquals(LocalTime.of(7, 0), extraHourDTOS.get(1).getEnd());
+    }
+
+    //voltar
+    @Test
+    public void test8() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
+                                new WorkTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(23, 0), LocalTime.of(2, 0)),
+                                new MarkedTime(2L, LocalTime.of(3, 0), LocalTime.of(7, 0))
+                        )
+                );
+
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
+
+        Assertions.assertEquals(2, extraHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(1, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(2, 0), extraHourDTOS.get(0).getEnd());
+
+        Assertions.assertEquals(LocalTime.of(6, 0), extraHourDTOS.get(1).getStart());
+        Assertions.assertEquals(LocalTime.of(7, 0), extraHourDTOS.get(1).getEnd());
+    }
+
+    @Test
+    public void test9() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
+                                new WorkTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
+                                new MarkedTime(2L, LocalTime.of(7, 0), LocalTime.of(15, 0))
+                        )
+                );
+
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
+
+        Assertions.assertEquals(1, extraHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(7, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(15, 0), extraHourDTOS.get(0).getEnd());
+    }
+
+    @Test
+    public void test10() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
+                                new WorkTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(22, 0), LocalTime.of(5, 0))
+                        )
+                );
+
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
+
+        Assertions.assertEquals(1, extraHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(1, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(2, 0), extraHourDTOS.get(0).getEnd());
+    }
+
+    @Test
+    public void test11() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
+                                new WorkTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
+                                new MarkedTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0)),
+                                new MarkedTime(2L, LocalTime.of(7, 0), LocalTime.of(10, 0))
+                        )
+                );
+
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
+
+        Assertions.assertEquals(1, extraHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(7, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(10, 0), extraHourDTOS.get(0).getEnd());
+    }
+
+    @Test
+    public void test12() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
+                                new WorkTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(20, 0), LocalTime.of(22, 0)),
+                                new MarkedTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0)),
+                                new MarkedTime(2L, LocalTime.of(7, 0), LocalTime.of(10, 0))
+                        )
+                );
+
+        final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
+
+        Assertions.assertEquals(2, extraHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(20, 0), extraHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(22, 0), extraHourDTOS.get(0).getEnd());
+
+        Assertions.assertEquals(LocalTime.of(7, 0), extraHourDTOS.get(1).getStart());
+        Assertions.assertEquals(LocalTime.of(10, 0), extraHourDTOS.get(1).getEnd());
+    }
+
+    @Test
     public void testExample4OvertimeReturningTwentyOneToTwentyTwo() {
         Mockito.when(this.workTimeRepository.listAll())
                 .thenReturn(getWorkScheduleExampleFour());
