@@ -91,23 +91,19 @@ public class ExtraHourServiceImpl implements ExtraHourService {
             List<ExtraHourDTO> extraHourDTOS,
             MarkedTime markedTime
     ) {
-        if (markedTime.getOutput().compareTo(first.getInput()) < 1
-                && markedTime.getOutput().isAfter(first.getOutput())
-                && markedTime.getInput().compareTo(last.getOutput()) > -1
-                && first.getId().equals(last.getId())
-        ) {
+        if (markedTime.getInput().isBefore(first.getInput()) && markedTime.getInput().isAfter(first.getOutput())) {
+            if (markedTime.getOutput().compareTo(first.getOutput()) < 1) {
+                extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), first.getInput()));
+            } else if (markedTime.spansToNextDay()) {
+                extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), first.getInput()));
+            }
+        }
+        if (markedTime.spansToNextDay() && markedTime.getOutput().isAfter(last.getOutput())) {
+            extraHourDTOS.add(new ExtraHourDTO(first.getOutput(), markedTime.getOutput()));
+        } else if (markedTime.getInput().isBefore(last.getOutput()) && markedTime.getOutput().isAfter(last.getOutput())) {
+            extraHourDTOS.add(new ExtraHourDTO(last.getOutput(), markedTime.getOutput()));
+        } else if (markedTime.getInput().compareTo(last.getOutput()) > -1 && markedTime.getOutput().isAfter(last.getOutput())) {
             extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), markedTime.getOutput()));
-        } else {
-            if (markedTime.getInput().isBefore(first.getInput()) && markedTime.getInput().isAfter(first.getOutput())) {
-                if (markedTime.getOutput().isBefore(first.getOutput())) {
-                    extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), first.getInput()));
-                }
-            }
-            if (markedTime.getInput().isBefore(last.getOutput()) && markedTime.getOutput().isAfter(last.getOutput())) {
-                extraHourDTOS.add(new ExtraHourDTO(last.getOutput(), markedTime.getOutput()));
-            } else if (markedTime.getInput().compareTo(last.getOutput()) > -1 && markedTime.getOutput().isAfter(last.getOutput())) {
-                extraHourDTOS.add(new ExtraHourDTO(markedTime.getInput(), markedTime.getOutput()));
-            }
         }
     }
 

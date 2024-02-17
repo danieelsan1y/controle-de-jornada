@@ -488,10 +488,13 @@ class ExtraHourDTOServiceTest {
 
         final List<ExtraHourDTO> extraHourDTOS = this.extraHourService.getExtraHours();
 
-        Assertions.assertEquals(1, extraHourDTOS.size());
+        Assertions.assertEquals(2, extraHourDTOS.size());
 
         Assertions.assertEquals(LocalTime.of(21, 0), extraHourDTOS.get(0).getStart());
         Assertions.assertEquals(LocalTime.of(22, 0), extraHourDTOS.get(0).getEnd());
+
+        Assertions.assertEquals(LocalTime.of(6, 0), extraHourDTOS.get(1).getStart());
+        Assertions.assertEquals(LocalTime.of(7, 0), extraHourDTOS.get(1).getEnd());
     }
 
     private List<WorkTime> getWorkScheduleExampleOneAndTwo() {
