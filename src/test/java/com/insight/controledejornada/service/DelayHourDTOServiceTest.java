@@ -287,7 +287,7 @@ class DelayHourDTOServiceTest {
                 .thenReturn(
                         List.of(
                                 new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
-                                new WorkTime(1L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                                new WorkTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0))
                         )
                 );
 
@@ -316,7 +316,7 @@ class DelayHourDTOServiceTest {
                 .thenReturn(
                         List.of(
                                 new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
-                                new WorkTime(1L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                                new WorkTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0))
                         )
                 );
 
@@ -342,7 +342,7 @@ class DelayHourDTOServiceTest {
                 .thenReturn(
                         List.of(
                                 new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
-                                new WorkTime(1L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                                new WorkTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0))
                         )
                 );
 
@@ -366,7 +366,7 @@ class DelayHourDTOServiceTest {
                 .thenReturn(
                         List.of(
                                 new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
-                                new WorkTime(1L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                                new WorkTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0))
                         )
                 );
 
@@ -383,6 +383,61 @@ class DelayHourDTOServiceTest {
 
         Assertions.assertEquals(LocalTime.of(5, 0), delayHourDTOS.get(0).getStart());
         Assertions.assertEquals(LocalTime.of(6, 0), delayHourDTOS.get(0).getEnd());
+    }
+
+    @Test
+    public void test11() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
+                                new WorkTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                        )
+                );
+
+        final List<DelayHourDTO> delayHourDTOS = this.delayHourService.getDelayHours();
+
+        Assertions.assertEquals(1, delayHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(22, 0), delayHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(1, 0), delayHourDTOS.get(0).getEnd());
+    }
+
+    @Test
+    public void test12() {
+        Mockito.when(this.workTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new WorkTime(1L, LocalTime.of(22, 0), LocalTime.of(1, 0)),
+                                new WorkTime(2L, LocalTime.of(2, 0), LocalTime.of(6, 0))
+                        )
+                );
+
+        Mockito.when(this.markedTimeRepository.listAll())
+                .thenReturn(
+                        List.of(
+                                new MarkedTime(1L, LocalTime.of(22, 0), LocalTime.of(0, 0)),
+                                new MarkedTime(2L, LocalTime.of(1, 0), LocalTime.of(4, 0)),
+                                new MarkedTime(2L, LocalTime.of(5, 0), LocalTime.of(10, 0))
+                        )
+                );
+
+        final List<DelayHourDTO> delayHourDTOS = this.delayHourService.getDelayHours();
+
+        Assertions.assertEquals(2, delayHourDTOS.size());
+
+        Assertions.assertEquals(LocalTime.of(0, 0), delayHourDTOS.get(0).getStart());
+        Assertions.assertEquals(LocalTime.of(1, 0), delayHourDTOS.get(0).getEnd());
+
+        Assertions.assertEquals(LocalTime.of(4, 0), delayHourDTOS.get(1).getStart());
+        Assertions.assertEquals(LocalTime.of(5, 0), delayHourDTOS.get(1).getEnd());
     }
 
     private List<WorkTime> getWorkScheduleExampleOneAndTwo() {

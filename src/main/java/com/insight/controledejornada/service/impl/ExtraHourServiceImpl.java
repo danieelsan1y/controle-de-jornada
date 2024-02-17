@@ -52,12 +52,11 @@ public class ExtraHourServiceImpl implements ExtraHourService {
                 .forEach(it -> {
                     if (first.notSpansToNextDay() && it.notSpansToNextDay()) {
                         this.setOvertimeBeforeWork(first, extraHourDTOS, it);
-
                         this.setOvertimeDuringTheBreak(it, intervals, extraHourDTOS);
-
                         this.setOvertimeAfterWork(extraHourDTOS, last, it);
                     } else {
-                        this.setOvertimeBeforeWorkA(first, last, extraHourDTOS, it);
+                        this.processSpansToNexDay(first, last, extraHourDTOS, it);
+                        this.setOvertimeDuringTheBreak(it, intervals, extraHourDTOS);
                     }
                 });
     }
@@ -86,7 +85,7 @@ public class ExtraHourServiceImpl implements ExtraHourService {
         }
     }
 
-    private void setOvertimeBeforeWorkA(
+    private void processSpansToNexDay(
             WorkTime first,
             WorkTime last,
             List<ExtraHourDTO> extraHourDTOS,
@@ -162,14 +161,17 @@ public class ExtraHourServiceImpl implements ExtraHourService {
         } else if ((markedTimeInput.isBefore(intervalInput) || markedTime.getInput().equals(intervalInput))
                 && markedTimeOutput.isAfter(intervalInput) && markedTimeOutput.isBefore(intervalOutput)) {
             extraHourDTOS.add(new ExtraHourDTO(intervalInput, markedTimeOutput));
-        }
-        if (markedTimeInput.isAfter(intervalInput) && markedTimeInput.isBefore(intervalOutput) &&
+        } else if (markedTimeInput.isAfter(intervalInput) && markedTimeInput.isBefore(intervalOutput) &&
                 (markedTimeOutput.isAfter(intervalOutput) || markedTimeOutput.equals(intervalOutput))) {
             extraHourDTOS.add(new ExtraHourDTO(markedTimeInput, intervalOutput));
-        }
-        if (markedTimeInput.isAfter(intervalInput) && markedTime.getInput().isBefore(intervalOutput)
+        } else if (markedTimeInput.isAfter(intervalInput) && markedTime.getInput().isBefore(intervalOutput)
                 && markedTimeOutput.isBefore(intervalOutput) && markedTimeOutput.isAfter(intervalInput)) {
             extraHourDTOS.add(new ExtraHourDTO(markedTimeInput, intervalOutput));
+        } else if (markedTime.getOutput().compareTo(intervalInput) > -1
+                && markedTime.spansToNextDay()
+                && markedTime.getOutput().compareTo(intervalOutput) > -1
+        ) {
+            extraHourDTOS.add(new ExtraHourDTO(intervalInput, intervalOutput));
         }
     }
 }

@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalTime;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -109,9 +111,7 @@ public class DelayHourServiceImpl implements DelayHourService {
         final Optional<MarkedTime> equals = this.getEquals(workTime, markedTimes)
                 .filter(Time::notSpansToNextDay);
 
-        final Optional<MarkedTime> greater = this.getGreater(workTime, markedTimes)
-                .filter(Time::notSpansToNextDay);
-
+        final Optional<MarkedTime> greater = this.getGreater(workTime, markedTimes, Time::notSpansToNextDay);
         final Optional<MarkedTime> union = this.getUnion(workTime, markedTimes);
         boolean isWorkingHours = true;
 
@@ -169,7 +169,7 @@ public class DelayHourServiceImpl implements DelayHourService {
                 this.processInputAndOutputSpansToNextDay(
                         delayHourDTOS,
                         markingsInThePeriod.get(0),
-                        markingsInThePeriod.get(markedTimes.size() - 1),
+                        markingsInThePeriod.get(markingsInThePeriod.size() - 1),
                         workTime
                 );
 
@@ -178,7 +178,7 @@ public class DelayHourServiceImpl implements DelayHourService {
         } else {
             final Optional<MarkedTime> equals = getEquals(workTime, sortedTimes);
 
-            final Optional<MarkedTime> greater = getGreater(workTime, sortedTimes);
+            final Optional<MarkedTime> greater = getGreater(workTime, sortedTimes, Time::spansToNextDay);
 
             if (equals.isEmpty() && greater.isEmpty()) {
                 delayHourDTOS.add(new DelayHourDTO(workTime.getInput(), workTime.getOutput()));
@@ -186,12 +186,12 @@ public class DelayHourServiceImpl implements DelayHourService {
         }
     }
 
-    private Optional<MarkedTime> getGreater(WorkTime workTime, List<MarkedTime> sortedTimes) {
+    private Optional<MarkedTime> getGreater(WorkTime workTime, List<MarkedTime> sortedTimes, Predicate<Time> function) {
         return sortedTimes.stream()
                 .filter(it -> it.getInput().compareTo(workTime.getInput()) < 1
                         && it.getOutput().compareTo(workTime.getOutput()) > -1
                 )
-                .filter(it -> !it.spansToNextDay())
+                .filter(function)
                 .findFirst();
     }
 
