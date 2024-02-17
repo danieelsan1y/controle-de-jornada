@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
-class DelayHourDTOServiceTest {
+class DelayHourServiceTest {
 
     private WorkTimeRepository workTimeRepository;
 

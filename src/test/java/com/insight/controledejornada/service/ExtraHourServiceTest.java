@@ -18,7 +18,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
-class ExtraHourDTOServiceTest {
+class ExtraHourServiceTest {
 
     private WorkTimeRepository workTimeRepository;
 
